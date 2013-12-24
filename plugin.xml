@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:rim="http://www.blackberry.com/ns/widgets"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="xu.li.cordova.weixin"
+    version="0.1">
+    <name>Weixin</name>
+    <description>A cordova plugin to share message to Weixin App</description>
+    <license>MIT</license>
+    <keywords>cordova,weixin,share</keywords>
+    <repo>https://github.com/xu-li/phonegap-weixin.git</repo>
+    <issue>https://github.com/xu-li/phonegap-weixin/issues</issue>
+
+    <!-- add this to your config.xml -->
+    <!-- <preference name="WeixinAppId" value="YOUR_WEIXIN_APP_ID_HERE" /> -->
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Weixin">
+                <param name="ios-package" value="CDVWeixin"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/CDVWeixin.h" />
+        <source-file src="src/ios/CDVWeixin.m" />
+    </platform>
+</plugin>
