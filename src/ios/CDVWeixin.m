@@ -26,7 +26,7 @@
         return ;
     }
 
-    
+    // check arguments
     NSDictionary *params = [command.arguments objectAtIndex:0];
     if (!params)
     {
@@ -36,20 +36,10 @@
         return ;
     }
     
-    SendMessageToWXReq* req = [[SendMessageToWXReq alloc] init];
+    // save the callback id
+    self.currentCallbackId = command.callbackId;
     
-    // message or text?
-    NSDictionary *message = [params objectForKey:@"message"];
-    if (message)
-    {
-        req.message = [self buildSharingMessage:message];
-        req.bText = NO;
-    }
-    else
-    {
-        req.text = [params objectForKey:@"text"];
-        req.bText = YES;
-    }
+    SendMessageToWXReq* req = [[SendMessageToWXReq alloc] init];
     
     // check the scene
     if ([params objectForKey:@"scene"])
@@ -61,9 +51,27 @@
         req.scene = WXSceneTimeline;
     }
     
-    [WXApi sendReq:req];
-    
-    self.currentCallbackId = command.callbackId;
+    // message or text?
+    NSDictionary *message = [params objectForKey:@"message"];
+
+    if (message)
+    {
+        req.bText = NO;
+
+        // async
+        [self.commandDelegate runInBackground:^{
+            req.message = [self buildSharingMessage:message];
+            
+            [WXApi sendReq:req];
+        }];
+    }
+    else
+    {
+        req.bText = YES;
+        req.text = [params objectForKey:@"text"];
+        
+        [WXApi sendReq:req];
+    }
 }
 
 #pragma mark "WXApiDelegate"
@@ -156,11 +164,11 @@
 
 - (WXMediaMessage *)buildSharingMessage:(NSDictionary *)message
 {
-    WXMediaMessage *wxMeidaMessage = [WXMediaMessage message];
-    wxMeidaMessage.title = [message objectForKey:@"title"];
-    wxMeidaMessage.description = [message objectForKey:@"description"];
-    wxMeidaMessage.mediaTagName = [message objectForKey:@"mediaTagName"];
-    [wxMeidaMessage setThumbImage:[self getUIImageFromURL:[message objectForKey:@"thumb"]]];
+    WXMediaMessage *wxMediaMessage = [WXMediaMessage message];
+    wxMediaMessage.title = [message objectForKey:@"title"];
+    wxMediaMessage.description = [message objectForKey:@"description"];
+    wxMediaMessage.mediaTagName = [message objectForKey:@"mediaTagName"];
+    [wxMediaMessage setThumbImage:[self getUIImageFromURL:[message objectForKey:@"thumb"]]];
     
     // media parameters
     id mediaObject = nil;
@@ -194,9 +202,8 @@
         ((WXWebpageObject *)mediaObject).webpageUrl = [media objectForKey:@"webpageUrl"];
     }
 
-    wxMeidaMessage.mediaObject = mediaObject;
-    
-    return wxMeidaMessage;
+    wxMediaMessage.mediaObject = mediaObject;
+    return wxMediaMessage;
 }
 
 - (UIImage *)getUIImageFromURL:(NSString *)thumb
@@ -213,7 +220,7 @@
     {
         data = [NSData dataWithContentsOfURL:thumbUrl];
     }
-    
+
     return [UIImage imageWithData:data];
 }
 
