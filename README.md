@@ -35,11 +35,19 @@ cordova.exec(function () {
 }, function (reason) {
     alert("Failed: " + reason);
 }, 'Weixin', 'share', [{
-    title: "Awesome!",
-    description: "This is an awesome cordova plugin!",
-    thumb: "http://cordova.apache.org/images/cordova_bot.png",
-    url: "https://github.com/xu-li/cordova-plugin-weixin"
+    message: {
+       title: "Message Title",
+       description: "Message Description(optional)",
+       mediaTagName: "Media Tag Name(optional)",
+       thumb: "http://YOUR_THUMBNAIL_IMAGE",
+       media: {
+           type: 1,   webpage
+           webpageUrl: "https://github.com/xu-li/cordova-plugin-weixin"    // webpage
+       }
+   },
+   scene: 1   // share to WXSceneTimeline
 }]);
+
 ```
 
 
