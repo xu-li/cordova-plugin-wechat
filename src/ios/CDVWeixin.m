@@ -1,6 +1,6 @@
 //
 //  CDVWeixin.m
-//  phonegap-weixin
+//  cordova-plugin-weixin
 //
 //  Created by xu.li on 12/23/13.
 //
@@ -15,19 +15,51 @@
 - (void)share:(CDVInvokedUrlCommand *)command
 {
     [WXApi registerApp:self.weixinAppId];
+
+    CDVPluginResult *result = nil;
+    // if not installed
+    if (![WXApi isWXAppInstalled])
+    {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"未安装微信"];
+
+        [self error:result callbackId:command.callbackId];
+        return ;
+    }
+
     
     NSDictionary *params = [command.arguments objectAtIndex:0];
-    NSString *title = [params objectForKey:@"title"];
-    NSString *description = [params objectForKey:@"description"];
-    NSString *imageUrl = [params objectForKey:@"thumb"];
-    NSString *url = [params objectForKey:@"url"];
+    if (!params)
+    {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"参数错误"];
+
+        [self error:result callbackId:command.callbackId];
+        return ;
+    }
     
-    // @TODO add other media types
-    // @TODO add WXSceneSession
     SendMessageToWXReq* req = [[SendMessageToWXReq alloc] init];
-    req.bText = NO;
-    req.message = [self buildMediaMessage:title description:description thumb:imageUrl url:url];
-    req.scene = WXSceneTimeline;
+    
+    // message or text?
+    NSDictionary *message = [params objectForKey:@"message"];
+    if (message)
+    {
+        req.message = [self buildSharingMessage:message];
+        req.bText = NO;
+    }
+    else
+    {
+        req.text = [params objectForKey:@"text"];
+        req.bText = YES;
+    }
+    
+    // check the scene
+    if ([params objectForKey:@"scene"])
+    {
+        req.scene = [[params objectForKey:@"scene"] integerValue];
+    }
+    else
+    {
+        req.scene = WXSceneTimeline;
+    }
     
     [WXApi sendReq:req];
     
@@ -122,25 +154,67 @@
     return _weixinAppId;
 }
 
-- (WXMediaMessage *)buildMediaMessage:(NSString *)title description:(NSString *)description thumb:(NSString *)thumb url:(NSString *)url
+- (WXMediaMessage *)buildSharingMessage:(NSDictionary *)message
+{
+    WXMediaMessage *wxMeidaMessage = [WXMediaMessage message];
+    wxMeidaMessage.title = [message objectForKey:@"title"];
+    wxMeidaMessage.description = [message objectForKey:@"description"];
+    wxMeidaMessage.mediaTagName = [message objectForKey:@"mediaTagName"];
+    [wxMeidaMessage setThumbImage:[self getUIImageFromURL:[message objectForKey:@"thumb"]]];
+    
+    // media parameters
+    id mediaObject = nil;
+    NSDictionary *media = [message objectForKey:@"media"];
+    
+    // check types
+    NSInteger type = [[media objectForKey:@"type"] integerValue];
+    switch (type)
+    {
+        case CDVWXSharingTypeApp:
+        break;
+    
+        case CDVWXSharingTypeEmotion:
+        break;
+        
+        case CDVWXSharingTypeFile:
+        break;
+        
+        case CDVWXSharingTypeImage:
+        break;
+        
+        case CDVWXSharingTypeMusic:
+        break;
+        
+        case CDVWXSharingTypeVideo:
+        break;
+        
+        case CDVWXSharingTypeWebPage:
+        default:
+        mediaObject = [WXWebpageObject object];
+        ((WXWebpageObject *)mediaObject).webpageUrl = [media objectForKey:@"webpageUrl"];
+    }
+
+    wxMeidaMessage.mediaObject = mediaObject;
+    
+    return wxMeidaMessage;
+}
+
+- (UIImage *)getUIImageFromURL:(NSString *)thumb
 {
     NSURL *thumbUrl = [NSURL URLWithString:thumb];
+    NSData *data = nil;
     
-    // @TODO async loading
-    // @TODO disable caching?
-    NSData *thumbImageData = [NSData dataWithContentsOfURL:thumbUrl];
-    UIImage *thumbImage = [UIImage imageWithData:thumbImageData];
+    if ([thumbUrl isFileURL])
+    {
+        // local file
+        data = [NSData dataWithContentsOfFile:thumb];
+    }
+    else
+    {
+        data = [NSData dataWithContentsOfURL:thumbUrl];
+    }
     
-    WXMediaMessage *message = [WXMediaMessage message];
-    message.title = title;
-    message.description = description;
-    [message setThumbImage:thumbImage];
-    
-    WXWebpageObject *page = [WXWebpageObject object];
-    page.webpageUrl = url;
-
-    message.mediaObject = page;
-    
-    return message;
+    return [UIImage imageWithData:data];
 }
+
 @end
