@@ -1,20 +1,20 @@
 //
-//  CDVWeixin.m
-//  cordova-plugin-weixin
+//  CDVWechat.m
+//  cordova-plugin-wechat
 //
 //  Created by xu.li on 12/23/13.
 //
 //
 
-#import "CDVWeixin.h"
+#import "CDVWechat.h"
 
-@implementation CDVWeixin
+@implementation CDVWechat
 
 #pragma mark "API"
 
 - (void)share:(CDVInvokedUrlCommand *)command
 {
-    [WXApi registerApp:self.weixinAppId];
+    [WXApi registerApp:self.wechatAppId];
 
     CDVPluginResult *result = nil;
     // if not installed
@@ -143,7 +143,7 @@
 {
     NSURL* url = [notification object];
     
-    if ([url isKindOfClass:[NSURL class]] && [url.scheme isEqualToString:self.weixinAppId])
+    if ([url isKindOfClass:[NSURL class]] && [url.scheme isEqualToString:self.wechatAppId])
     {
         [WXApi handleOpenURL:url delegate:self];
     }
@@ -151,15 +151,15 @@
 
 #pragma mark "Private methods"
 
-- (NSString *)weixinAppId
+- (NSString *)wechatAppId
 {
-    if (!_weixinAppId)
+    if (!_wechatAppId)
     {
         CDVViewController *viewController = (CDVViewController *)self.viewController;
-        _weixinAppId = [viewController.settings objectForKey:@"weixinappid"];
+        _wechatAppId = [viewController.settings objectForKey:@"wechatappid"];
     }
     
-    return _weixinAppId;
+    return _wechatAppId;
 }
 
 - (WXMediaMessage *)buildSharingMessage:(NSDictionary *)message
