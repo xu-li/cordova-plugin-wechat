@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="xu.li.cordova.wechat"
-    version="0.3">
+    version="0.4">
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
     <license>MIT</license>
@@ -15,11 +15,16 @@
     <!-- add this to your config.xml -->
     <!-- <preference name="WechatAppId" value="YOUR_WECHAT_APP_ID_HERE" /> -->
 
+    <js-module src="www/wechat.js" name="Wechat">
+        <clobbers target="Wechat" />
+    </js-module>
+
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="Wechat">
                 <param name="ios-package" value="CDVWechat"/>
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
@@ -27,7 +32,7 @@
         <source-file src="src/ios/CDVWechat.m" />
     </platform>
 
-
+    <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Wechat">

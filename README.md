@@ -30,29 +30,32 @@ Usage
 ===============
 
 ```Javascript
-cordova.exec(function () {
-    alert("Success");
-}, function (reason) {
-    alert("Failed: " + reason);
-}, 'Wechat', 'share', [{
+Wechat.share({
     message: {
        title: "Message Title",
        description: "Message Description(optional)",
        mediaTagName: "Media Tag Name(optional)",
        thumb: "http://YOUR_THUMBNAIL_IMAGE",
        media: {
-           type: 1,   webpage
+           type: Wechat.Type.WEBPAGE,   // webpage
            webpageUrl: "https://github.com/xu-li/cordova-plugin-wechat"    // webpage
        }
    },
-   scene: 1   // share to WXSceneTimeline
-}]);
-
+   scene: Wechat.Scene.TIMELINE   // share to Timeline
+}, function () {
+    alert("Success");
+}, function (reason) {
+    alert("Failed: " + reason);
+});
 ```
 
 
 FAQ
 ===============
+
+Q: "Wechat not installed", even installed
+
+A: Please make sure "wechatappid" is added in ```config.xml``` 
 
 
 TODO
