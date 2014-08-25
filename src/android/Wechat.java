@@ -22,7 +22,7 @@ import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 
 public class Wechat extends CordovaPlugin {
 
-	public static final String WXAPPID_PROPERTY_KEY = "weixinappid";
+	public static final String WXAPPID_PROPERTY_KEY = "wechatappid";
 
 	public static final String ERROR_WX_NOT_INSTALLED = "未安装微信";
 	public static final String ERROR_ARGUMENTS = "参数错误";
