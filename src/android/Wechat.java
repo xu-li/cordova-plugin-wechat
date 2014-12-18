@@ -1,4 +1,4 @@
-package xu.li.cordova.weixin;
+package xu.li.cordova.wechat;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,15 +14,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXTextObject;
-import com.tencent.mm.sdk.openapi.WXWebpageObject;
+import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXTextObject;
+import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 
-public class Weixin extends CordovaPlugin {
+public class Wechat extends CordovaPlugin {
 
-	public static final String WXAPPID_PROPERTY_KEY = "weixinappid";
+	public static final String WXAPPID_PROPERTY_KEY = "wechatappid";
 
 	public static final String ERROR_WX_NOT_INSTALLED = "未安装微信";
 	public static final String ERROR_ARGUMENTS = "参数错误";
