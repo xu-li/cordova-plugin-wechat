@@ -8,6 +8,7 @@
 
 #import <Cordova/CDV.h>
 #import "WXApi.h"
+#import "WXApiObject.h"
 
 enum  CDVWechatSharingType {
     CDVWXSharingTypeApp = 1,
@@ -25,5 +26,6 @@ enum  CDVWechatSharingType {
 @property (nonatomic, strong) NSString *wechatAppId;
 
 - (void)share:(CDVInvokedUrlCommand *)command;
+- (void)registerApp:(NSString *)wechatAppId;
 
 @end

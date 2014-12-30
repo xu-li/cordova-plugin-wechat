@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="xu.li.cordova.wechat"
-    version="0.4">
+    version="0.5.0">
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
     <license>MIT</license>
@@ -28,8 +28,38 @@
             </feature>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>CFBundleURLName</key>
+                    <string>wechat</string>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>YOUR_WECHAT_APP_ID</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
+
+        <!-- Plugin source code -->
         <header-file src="src/ios/CDVWechat.h" />
         <source-file src="src/ios/CDVWechat.m" />
+        <header-file src="src/ios/AppDelegate+CDVWechat.h" />
+        <source-file src="src/ios/AppDelegate+CDVWechat.m" />
+
+        <!-- Wechat Official -->
+        <header-file src="src/ios/libs/WeChatSDK_1.5/WeChatSDK_1.5/WXApi.h" />
+        <header-file src="src/ios/libs/WeChatSDK_1.5/WeChatSDK_1.5/WXApiObject.h" />
+        <source-file src="src/ios/libs/WeChatSDK_1.5/WeChatSDK_1.5/libWeChatSDK.a" framework="true" />
+
+        <!-- Other required frameworks -->
+        <framework src="libz.dylib" />
+        <framework src="libsqlite3.0.dylib" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="Security.framework" />
+        <framework src="libstdc++.6.dylib" />
     </platform>
 
     <!-- android -->
