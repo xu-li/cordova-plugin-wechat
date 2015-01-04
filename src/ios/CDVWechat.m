@@ -12,6 +12,13 @@
 
 #pragma mark "API"
 
+- (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[WXApi isWXAppInstalled]];
+    
+    [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+}
+
 - (void)share:(CDVInvokedUrlCommand *)command
 {
     // if not installed
@@ -37,7 +44,7 @@
     // check the scene
     if ([params objectForKey:@"scene"])
     {
-        req.scene = [[params objectForKey:@"scene"] integerValue];
+        req.scene = (int)[[params objectForKey:@"scene"] integerValue];
     }
     else
     {
@@ -74,6 +81,32 @@
     }
 }
 
+- (void)sendAuthRequest:(CDVInvokedUrlCommand *)command
+{
+    SendAuthReq* req =[[SendAuthReq alloc] init];
+
+    // scope
+    req.scope = [command.arguments objectAtIndex:0];
+    if (!req.scope || [req.scope length] == 0)
+    {
+        req.scope = @"snsapi_userinfo";
+    }
+    
+    // state
+    NSString *state = [command.arguments objectAtIndex:1];
+    if (state)
+    {
+        req.state = state;
+    }
+    
+    if ([WXApi sendReq:req]) {
+        // save the callback id
+        self.currentCallbackId = command.callbackId;
+    } else {
+        [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
+    }
+}
+
 - (void)registerApp:(NSString *)wechatAppId
 {
     self.wechatAppId = wechatAppId;
@@ -97,41 +130,54 @@
 {
     BOOL success = NO;
     NSString *message = @"Unknown";
+    NSDictionary *response = nil;
     
-    if([resp isKindOfClass:[SendMessageToWXResp class]])
+    switch (resp.errCode)
     {
-        switch (resp.errCode)
-        {
-            case WXSuccess:
-                success = YES;
+        case WXSuccess:
+            success = YES;
             break;
             
-            case WXErrCodeCommon:
-                message = @"普通错误类型";
+        case WXErrCodeCommon:
+            message = @"普通错误类型";
             break;
             
-            case WXErrCodeUserCancel:
-                message = @"用户点击取消并返回";
+        case WXErrCodeUserCancel:
+            message = @"用户点击取消并返回";
             break;
             
-            case WXErrCodeSentFail:
-                message = @"发送失败";
+        case WXErrCodeSentFail:
+            message = @"发送失败";
             break;
             
-            case WXErrCodeAuthDeny:
-                message = @"授权失败";
+        case WXErrCodeAuthDeny:
+            message = @"授权失败";
             break;
             
-            case WXErrCodeUnsupport:
-                message = @"微信不支持";
+        case WXErrCodeUnsupport:
+            message = @"微信不支持";
             break;
-        }
     }
-    
     
     if (success)
     {
-        [self successWithCallbackID:self.currentCallbackId];
+        if ([resp isKindOfClass:[SendAuthResp class]])
+        {
+            response = @{
+                         @"code": ((SendAuthResp*)resp).code,
+                         @"state": ((SendAuthResp*)resp).state,
+                         @"lang": ((SendAuthResp*)resp).lang,
+                         @"country": ((SendAuthResp*)resp).country,
+                         };
+            
+            CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
+            
+            [self.commandDelegate sendPluginResult:commandResult callbackId:self.currentCallbackId];
+        }
+        else
+        {
+            [self successWithCallbackID:self.currentCallbackId];
+        }
     }
     else
     {
