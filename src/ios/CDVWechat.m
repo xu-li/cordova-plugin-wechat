@@ -87,16 +87,19 @@
 
     // scope
     req.scope = [command.arguments objectAtIndex:0];
-    if (!req.scope || [req.scope length] == 0)
+    if ([command.arguments count] > 0)
+    {
+        req.scope = [command.arguments objectAtIndex:0];
+    }
+    else
     {
         req.scope = @"snsapi_userinfo";
     }
     
     // state
-    NSString *state = [command.arguments objectAtIndex:1];
-    if (state)
+    if ([command.arguments count] > 1)
     {
-        req.state = state;
+        req.state = [command.arguments objectAtIndex:1];
     }
     
     if ([WXApi sendReq:req]) {

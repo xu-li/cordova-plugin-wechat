@@ -17,6 +17,10 @@ module.exports = {
         WEBPAGE: 7
     },
 
+    isInstalled: function (onSuccess, onError) {
+        exec(onSuccess, onError, "Wechat", "isWXAppInstalled");
+    },
+
     /**
      * Share a message to wechat app
      *

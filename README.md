@@ -22,6 +22,26 @@ See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wech
 
 # Usage
 
+## Check if wechat is installed
+```Javascript
+Wechat.isInstalled(function (installed) {
+    alert("Wechat installed: " + (installed ? "Yes" : "No"));
+}, function (reason) {
+    alert("Failed: " + reason);
+});
+```
+
+## Authenticate using Wechat
+```Javascript
+var scope = "snsapi_userinfo";
+Wechat.auth(scope, function (response) {
+    // you may use response.code to get the access token.
+    alert(JSON.stringify(response));
+}, function (reason) {
+    alert("Failed: " + reason);
+});
+```
+
 ## Share text
 ```Javascript
 Wechat.share({
