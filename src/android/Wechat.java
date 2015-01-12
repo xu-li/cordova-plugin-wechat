@@ -12,20 +12,21 @@ import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
-import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 public class Wechat extends CordovaPlugin {
 
 	public static final String WXAPPID_PROPERTY_KEY = "wechatappid";
 
-	public static final String ERROR_WX_NOT_INSTALLED = "未安装微信";
-	public static final String ERROR_ARGUMENTS = "参数错误";
+	public static final String ERROR_WX_NOT_INSTALLED = "Not installed";
+	public static final String ERROR_ARGUMENTS = "Argument Error";
 
 	public static final String KEY_ARG_MESSAGE = "message";
 	public static final String KEY_ARG_SCENE = "scene";
@@ -37,6 +38,17 @@ public class Wechat extends CordovaPlugin {
 	public static final String KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL = "webpageUrl";
 	public static final String KEY_ARG_MESSAGE_MEDIA_TEXT = "text";
 
+	public static final String ERR_WECHAT_NOT_INSTALLED = "ERR_WECHAT_NOT_INSTALLED";
+    public static final String ERR_INVALID_OPTIONS = "ERR_INVALID_OPTIONS";
+    public static final String ERR_UNSUPPORTED_MEDIA_TYPE = "ERR_UNSUPPORTED_MEDIA_TYPE";
+    public static final String ERR_USER_CANCEL = "ERR_USER_CANCEL";
+    public static final String ERR_AUTH_DENIED = "ERR_AUTH_DENIED";
+    public static final String ERR_SENT_FAILED = "ERR_SENT_FAILED";
+    public static final String ERR_UNSUPPORT = "ERR_UNSUPPORT";
+    public static final String ERR_COMM = "ERR_COMM";
+    public static final String ERR_UNKNOWN = "ERR_UNKNOWN";
+    public static final String NO_RESULT = "NO_RESULT";
+    
 	public static final int TYPE_WX_SHARING_APP = 1;
 	public static final int TYPE_WX_SHARING_EMOTION = 2;
 	public static final int TYPE_WX_SHARING_FILE = 3;
@@ -46,9 +58,12 @@ public class Wechat extends CordovaPlugin {
 	public static final int TYPE_WX_SHARING_WEBPAGE = 7;
 	public static final int TYPE_WX_SHARING_TEXT = 8;
 	
-
-	protected IWXAPI wxAPI;
-	protected CallbackContext currentCallbackContext;
+    public static final int SCENE_SESSION = 0;
+    public static final int SCENE_TIMELINE = 1;
+    public static final int SCENE_FAVORITE = 2;
+    
+	public static IWXAPI wxAPI;
+	public static CallbackContext currentCallbackContext;
 
 	@Override
 	public boolean execute(String action, JSONArray args,
@@ -90,10 +105,22 @@ public class Wechat extends CordovaPlugin {
 
 		final JSONObject params = args.getJSONObject(0);
 		final SendMessageToWX.Req req = new SendMessageToWX.Req();
-		req.transaction = String.valueOf(System.currentTimeMillis());
+		req.transaction = buildTransaction(null);
 
 		if (params.has(KEY_ARG_SCENE)) {
-			req.scene = params.getInt(KEY_ARG_SCENE);
+			int scene = params.getInt(KEY_ARG_SCENE);
+			switch(scene)
+			{
+			case SCENE_FAVORITE:
+				req.scene = SendMessageToWX.Req.WXSceneFavorite;
+				break;
+			case SCENE_TIMELINE:
+				req.scene = SendMessageToWX.Req.WXSceneTimeline;
+				break;
+			case SCENE_SESSION:
+				req.scene = SendMessageToWX.Req.WXSceneSession;
+				break;
+			}
 		} else {
 			req.scene = SendMessageToWX.Req.WXSceneTimeline;
 		}
@@ -107,11 +134,10 @@ public class Wechat extends CordovaPlugin {
 					req.message = buildSharingMessage(params
 							.getJSONObject(KEY_ARG_MESSAGE));
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Log.e("Wechat", "Sharing error", e);
 				}
 				api.sendReq(req);
 			}
-
 		});
 
 		// save the current callback context
@@ -121,69 +147,81 @@ public class Wechat extends CordovaPlugin {
 
 	protected WXMediaMessage buildSharingMessage(JSONObject message)
 			throws JSONException {
-		URL thumbnailUrl = null;
-		Bitmap thumbnail = null;
-
-		try {
-			thumbnailUrl = new URL(message.getString(KEY_ARG_MESSAGE_THUMB));
-			thumbnail = BitmapFactory.decodeStream(thumbnailUrl
-					.openConnection().getInputStream());
-
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		WXMediaMessage wxMediaMessage = new WXMediaMessage();
-		wxMediaMessage.title = message.getString(KEY_ARG_MESSAGE_TITLE);
-		wxMediaMessage.description = message
-				.getString(KEY_ARG_MESSAGE_DESCRIPTION);
-		if (thumbnail != null) {
-			wxMediaMessage.setThumbImage(thumbnail);
-		}
-
+		
 		// media parameters
 		WXMediaMessage.IMediaObject mediaObject = null;
 		JSONObject media = message.getJSONObject(KEY_ARG_MESSAGE_MEDIA);
-
+		WXMediaMessage wxMediaMessage = new WXMediaMessage();
+		
 		// check types
 		int type = media.has(KEY_ARG_MESSAGE_MEDIA_TYPE) ? media
 				.getInt(KEY_ARG_MESSAGE_MEDIA_TYPE) : TYPE_WX_SHARING_WEBPAGE;
-		switch (type) {
-		case TYPE_WX_SHARING_APP:
-			break;
+				
+		URL thumbnailUrl = null;
+		Bitmap thumbnail = null;
 
-		case TYPE_WX_SHARING_EMOTION:
-			break;
-
-		case TYPE_WX_SHARING_FILE:
-			break;
-
-		case TYPE_WX_SHARING_IMAGE:
-			break;
-
-		case TYPE_WX_SHARING_MUSIC:
-			break;
-
-		case TYPE_WX_SHARING_VIDEO:
-			break;
-			
-		case TYPE_WX_SHARING_TEXT:
-			mediaObject = new WXTextObject();
-			((WXTextObject)mediaObject).text = media.getString(KEY_ARG_MESSAGE_MEDIA_TEXT);
-			break;
-
-		case TYPE_WX_SHARING_WEBPAGE:
-		default:
-			mediaObject = new WXWebpageObject();
-			((WXWebpageObject) mediaObject).webpageUrl = media
-					.getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL);
+		if(type == TYPE_WX_SHARING_TEXT)
+		{
+            WXTextObject textObject = new WXTextObject();
+            textObject.text = message.getString(KEY_ARG_MESSAGE_MEDIA_TEXT);
+            mediaObject = textObject;
+            wxMediaMessage.description = textObject.text;
 		}
+		else
+		{
+			try {
+				thumbnailUrl = new URL(message.getString(KEY_ARG_MESSAGE_THUMB));
+				thumbnail = BitmapFactory.decodeStream(thumbnailUrl
+						.openConnection().getInputStream());
+
+			} catch (Exception e) {
+				Log.e("Wechat", "Thumb URL parsing error", e);
+			}
+
+			
+			wxMediaMessage.title = message.getString(KEY_ARG_MESSAGE_TITLE);
+			wxMediaMessage.description = message
+					.getString(KEY_ARG_MESSAGE_DESCRIPTION);
+			if (thumbnail != null) {
+				wxMediaMessage.setThumbImage(thumbnail);
+			}
+
+
+			switch (type) {
+			case TYPE_WX_SHARING_APP:
+				break;
+
+			case TYPE_WX_SHARING_EMOTION:
+				break;
+
+			case TYPE_WX_SHARING_FILE:
+				break;
+
+			case TYPE_WX_SHARING_IMAGE:
+				break;
+
+			case TYPE_WX_SHARING_MUSIC:
+				break;
+
+			case TYPE_WX_SHARING_VIDEO:
+				break;
+				
+			case TYPE_WX_SHARING_WEBPAGE:
+			default:
+				mediaObject = new WXWebpageObject();
+				((WXWebpageObject) mediaObject).webpageUrl = media
+						.getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL);
+			}
+		}
+	
 
 		wxMediaMessage.mediaObject = mediaObject;
 
 		return wxMediaMessage;
+	}
+
+	private String buildTransaction(final String type) {
+		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
 	}
 }
 
