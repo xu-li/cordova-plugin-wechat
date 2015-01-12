@@ -84,7 +84,7 @@
         </config-file>
 
         <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
-        <source-file src="src/android/WXEntryActivity.java" target-dir="src/com/wizky/housediary/WXApi" />
+        <source-file src="src/android/WXEntryActivity.java" target-dir="src/com/wizky/housediary/wxapi" />
         <source-file src="src/android/libammsdk.jar" target-dir="libs" />
 
     </platform>
