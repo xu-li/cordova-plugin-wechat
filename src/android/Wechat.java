@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
@@ -30,6 +31,7 @@ public class Wechat extends CordovaPlugin {
 
 	public static final String KEY_ARG_MESSAGE = "message";
 	public static final String KEY_ARG_SCENE = "scene";
+	public static final String KEY_ARG_TEXT = "text";
 	public static final String KEY_ARG_MESSAGE_TITLE = "title";
 	public static final String KEY_ARG_MESSAGE_DESCRIPTION = "description";
 	public static final String KEY_ARG_MESSAGE_THUMB = "thumb";
@@ -73,6 +75,10 @@ public class Wechat extends CordovaPlugin {
 			// sharing
 			return share(args, callbackContext);
 		}
+		else if(action.equals("sendAuthRequest"))
+		{
+			return sendAuthRequest(args, callbackContext);
+		}
 
 		return super.execute(action, args, callbackContext);
 	}
@@ -84,6 +90,34 @@ public class Wechat extends CordovaPlugin {
 		}
 
 		return wxAPI;
+	}
+	
+	protected boolean sendAuthRequest(JSONArray args, CallbackContext callbackContext)
+	{
+		final IWXAPI api = getWXAPI();
+		api.registerApp(webView.getProperty(WXAPPID_PROPERTY_KEY, ""));
+		final SendAuth.Req req = new SendAuth.Req();
+		req.scope = "snsapi_userinfo";
+		req.state = "wechat_sdk_demo_test";
+		
+		// check if # of arguments is correct
+		if (args.length() > 0) {
+			try {
+				req.scope = args.getString(0);
+			} catch (Exception e) {
+				Log.e(Wechat.class.getName()
+						, "sendAuthRequest parameter parsing failure"
+						, e);
+			}
+		}
+		else
+		{
+			req.scope = "snsapi_userinfo";
+		}
+		api.sendReq(req);
+		currentCallbackContext = callbackContext;
+		
+		return true;
 	}
 
 	protected boolean share(JSONArray args, CallbackContext callbackContext)
@@ -131,8 +165,7 @@ public class Wechat extends CordovaPlugin {
 			@Override
 			public void run() {
 				try {
-					req.message = buildSharingMessage(params
-							.getJSONObject(KEY_ARG_MESSAGE));
+					req.message = buildSharingMessage(params);
 				} catch (JSONException e) {
 					Log.e("Wechat", "Sharing error", e);
 				}
@@ -145,30 +178,32 @@ public class Wechat extends CordovaPlugin {
 		return true;
 	}
 
-	protected WXMediaMessage buildSharingMessage(JSONObject message)
+	protected WXMediaMessage buildSharingMessage(JSONObject params)
 			throws JSONException {
-		
+
 		// media parameters
 		WXMediaMessage.IMediaObject mediaObject = null;
-		JSONObject media = message.getJSONObject(KEY_ARG_MESSAGE_MEDIA);
 		WXMediaMessage wxMediaMessage = new WXMediaMessage();
 		
-		// check types
-		int type = media.has(KEY_ARG_MESSAGE_MEDIA_TYPE) ? media
-				.getInt(KEY_ARG_MESSAGE_MEDIA_TYPE) : TYPE_WX_SHARING_WEBPAGE;
-				
-		URL thumbnailUrl = null;
-		Bitmap thumbnail = null;
-
-		if(type == TYPE_WX_SHARING_TEXT)
+		if(params.has(KEY_ARG_TEXT))
 		{
             WXTextObject textObject = new WXTextObject();
-            textObject.text = message.getString(KEY_ARG_MESSAGE_MEDIA_TEXT);
+            textObject.text = params.getString(KEY_ARG_TEXT);
             mediaObject = textObject;
             wxMediaMessage.description = textObject.text;
 		}
 		else
 		{
+			JSONObject message = params.getJSONObject(KEY_ARG_MESSAGE);
+			JSONObject media = message.getJSONObject(KEY_ARG_MESSAGE_MEDIA);
+			
+			// check types
+			int type = media.has(KEY_ARG_MESSAGE_MEDIA_TYPE) ? media
+					.getInt(KEY_ARG_MESSAGE_MEDIA_TYPE) : TYPE_WX_SHARING_WEBPAGE;
+					
+			URL thumbnailUrl = null;
+			Bitmap thumbnail = null;
+
 			try {
 				thumbnailUrl = new URL(message.getString(KEY_ARG_MESSAGE_THUMB));
 				thumbnail = BitmapFactory.decodeStream(thumbnailUrl

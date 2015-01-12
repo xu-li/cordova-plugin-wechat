@@ -1,14 +1,24 @@
 package com.wizky.housediary.wxapi;
 
+import java.io.BufferedReader;
+import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import xu.li.cordova.wechat.Wechat;
 
+import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SyncStateContract.Constants;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -40,9 +50,18 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 
     @Override
     public void onResp(BaseResp resp) {
+        Log.i(WXEntryActivity.class.getName(), resp.toString());
         switch (resp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
-                Wechat.currentCallbackContext.success();
+                switch(resp.getType())
+                {
+                 case ConstantsAPI.COMMAND_SENDAUTH:
+                    auth(resp);
+                    break;
+                 default:
+                    Wechat.currentCallbackContext.success();
+                    break;
+                }
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 Wechat.currentCallbackContext.error(Wechat.ERR_USER_CANCEL);
@@ -64,6 +83,23 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
                 break;
         }
         finish();
+    }
+    
+    private void auth(BaseResp resp) {
+        SendAuth.Resp res = ((SendAuth.Resp) resp);
+        Log.i("WEChat", "AuthResp " + res);
+        JSONObject response = new JSONObject();
+        try {
+            response.put("code",  res.code);
+            response.put("state",  res.state);
+            response.put("country",  res.country);
+            response.put("lang",  res.lang);
+        } catch (JSONException e) {
+            Log.e(WXEntryActivity.class.getName()
+                    , "auth response failure"
+                    , e);
+        }
+        Wechat.currentCallbackContext.success(response);
     }
 
     @Override
