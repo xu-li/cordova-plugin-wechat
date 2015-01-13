@@ -20,7 +20,8 @@ See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wech
 
 4. Change the URL Type using XCode
 
-# Note: Install(Android) Inspired by https://github.com/vilic/cordova-plugin-wechat
+# Note: Install(Android) 
+Inspired by https://github.com/vilic/cordova-plugin-wechat
 Wechat needs to callback to "your.package.name.wxapi.WXEntryActivity" to handle response. Since the package name is determined when you install the packag.java, so we use hook to call android-install.js to do the work.
 I found some older version of cordova(ionic 1.3.0) doesn't trigger this js, so if you found this file isn't copied, consider upgrade Cordova.
 

@@ -22,17 +22,6 @@ import android.provider.SyncStateContract.Constants;
 import android.util.Log;
 import android.view.KeyEvent;
 
-
-/*
-    Cordova WeChat Plugin
-    https://github.com/vilic/cordova-plugin-wechat
-
-    by VILIC VANE
-    https://github.com/vilic
-
-    MIT License
-*/
-
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
     @Override
     public void onCreate(Bundle savedInstanceState) {
