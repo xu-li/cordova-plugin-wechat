@@ -97,8 +97,7 @@ public class Wechat extends CordovaPlugin {
 		final IWXAPI api = getWXAPI();
 		api.registerApp(webView.getProperty(WXAPPID_PROPERTY_KEY, ""));
 		final SendAuth.Req req = new SendAuth.Req();
-		req.scope = "snsapi_userinfo";
-		req.state = "wechat_sdk_demo_test";
+		req.state = "wechat_auth";
 		
 		// check if # of arguments is correct
 		if (args.length() > 0) {

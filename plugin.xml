@@ -64,6 +64,9 @@
 
     <!-- android -->
     <platform name="android">
+        <hook type="after_plugin_install" src="scripts/android-install.js" />
+        <hook type="before_plugin_uninstall" src="scripts/android-install.js" />
+
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Wechat">
                 <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
@@ -84,8 +87,10 @@
         </config-file>
 
         <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
-        <source-file src="src/android/WXEntryActivity.java" target-dir="src/com/wizky/housediary/wxapi" />
         <source-file src="src/android/libammsdk.jar" target-dir="libs" />
-
+        <!--
+            微信需要回调app的package name下的wxapi/WXEntryActivity.java，所以使用钩子 (hook) 脚本android-install.js添加到你的项目 id 对应的文件夹中,
+            除此之外脚本还会修改该文件中的包名, 以匹配应用 id. 某些旧版本的cordova貌似不会trigger这个js，如果发现WXEntryActivty没有被拷贝，建议更新cordova
+        -->
     </platform>
 </plugin>

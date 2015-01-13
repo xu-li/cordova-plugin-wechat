@@ -1,4 +1,4 @@
-package com.wizky.housediary.wxapi;
+package to.be.replaced.wxapi;
 
 import java.io.BufferedReader;
 import java.net.URL;
