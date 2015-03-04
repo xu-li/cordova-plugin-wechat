@@ -166,11 +166,13 @@
     {
         if ([resp isKindOfClass:[SendAuthResp class]])
         {
+            // fix issue that lang and country could be nil for iPhone 6 which caused crash.
+            SendAuthResp* authResp = (SendAuthResp*)resp;
             response = @{
-                         @"code": ((SendAuthResp*)resp).code,
-                         @"state": ((SendAuthResp*)resp).state,
-                         @"lang": ((SendAuthResp*)resp).lang,
-                         @"country": ((SendAuthResp*)resp).country,
+                         @"code": authResp.code != nil ? authResp.code : @"",
+                         @"state": authResp.state != nil ? authResp.state : @"",
+                         @"lang": authResp.lang != nil ? authResp.lang : @"",
+                         @"country": authResp.country != nil ? authResp.country : @"",
                          };
             
             CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
