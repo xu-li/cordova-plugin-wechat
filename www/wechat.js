@@ -18,7 +18,7 @@ module.exports = {
     },
 
     isInstalled: function (onSuccess, onError) {
-        exec(onSuccess, onError, "Wechat", "isWXAppInstalled");
+        exec(onSuccess, onError, "Wechat", "isWXAppInstalled", []);
     },
 
     /**
