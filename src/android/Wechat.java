@@ -79,6 +79,11 @@ public class Wechat extends CordovaPlugin {
 		{
 			return sendAuthRequest(args, callbackContext);
 		}
+		else if(action.equals("isWXAppInstalled"))
+		{
+			return isInstalled(callbackContext);
+		}
+
 
 		return super.execute(action, args, callbackContext);
 	}
@@ -173,6 +178,20 @@ public class Wechat extends CordovaPlugin {
 		});
 
 		// save the current callback context
+		currentCallbackContext = callbackContext;
+		return true;
+	}
+
+	protected boolean isInstalled(CallbackContext callbackContext){
+		final IWXAPI api = getWXAPI();
+		api.registerApp(webView.getProperty(WXAPPID_PROPERTY_KEY, ""));
+
+		if (!api.isWXAppInstalled()) {
+			callbackContext.error(ERROR_WX_NOT_INSTALLED);
+			return false;
+		}else{
+			callbackContext.success("true");
+		}
 		currentCallbackContext = callbackContext;
 		return true;
 	}
