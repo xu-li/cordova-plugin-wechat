@@ -19,16 +19,16 @@ void swizzleMethod(Class c, SEL originalSelector)
     
     SEL swizzledSelector = NSSelectorFromString([@"swizzled_" stringByAppendingString:original]);
     SEL noopSelector = NSSelectorFromString([@"noop_" stringByAppendingString:original]);
-
+    
     Method originalMethod, swizzledMethod, noop;
     originalMethod = class_getInstanceMethod(c, originalSelector);
     swizzledMethod = class_getInstanceMethod(c, swizzledSelector);
     noop = class_getInstanceMethod(c, noopSelector);
     
     BOOL didAddMethod = class_addMethod(c,
-                    originalSelector,
-                    method_getImplementation(swizzledMethod),
-                    method_getTypeEncoding(swizzledMethod));
+                                        originalSelector,
+                                        method_getImplementation(swizzledMethod),
+                                        method_getTypeEncoding(swizzledMethod));
     
     if (didAddMethod)
     {
