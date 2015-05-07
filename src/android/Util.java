@@ -1,4 +1,4 @@
-package com.gigamore.mscm;
+package xu.li.cordova.wechat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

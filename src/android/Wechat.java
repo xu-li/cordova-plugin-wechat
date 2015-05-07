@@ -15,7 +15,6 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
-import com.gigamore.mscm.Util;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.sdk.modelmsg.WXImageObject;
