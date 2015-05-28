@@ -84,7 +84,9 @@ public class Wechat extends CordovaPlugin {
 			return isInstalled(callbackContext);
 		}
                 //add test file midofy.
-
+                else if (action.equals("wxPay")) {
+                	return wxPay(args,callbackContext);
+                }
 		return super.execute(action, args, callbackContext);
 	}
 
@@ -95,6 +97,13 @@ public class Wechat extends CordovaPlugin {
 		}
 
 		return wxAPI;
+	}
+	
+	protected boolean wxPay(JSONArray args, CallbackContext callbackContext) {
+		final IWXAPI api = getWXAPI();
+		api.registerApp(preferences.getString(WXAPPID_PROPERTY_KEY, ""));
+		
+		return true;
 	}
 	
 	protected boolean sendAuthRequest(JSONArray args, CallbackContext callbackContext)
