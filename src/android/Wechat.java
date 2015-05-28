@@ -83,7 +83,7 @@ public class Wechat extends CordovaPlugin {
 		{
 			return isInstalled(callbackContext);
 		}
-
+                //add test file midofy.
 
 		return super.execute(action, args, callbackContext);
 	}
