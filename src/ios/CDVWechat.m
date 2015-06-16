@@ -27,7 +27,7 @@
         [self failWithCallbackID:command.callbackId withMessage:@"未安装微信"];
         return ;
     }
-
+    
     // check arguments
     NSDictionary *params = [command.arguments objectAtIndex:0];
     if (!params)
@@ -57,7 +57,7 @@
     if (message)
     {
         req.bText = NO;
-
+        
         // async
         [self.commandDelegate runInBackground:^{
             req.message = [self buildSharingMessage:message];
@@ -84,7 +84,7 @@
 - (void)sendAuthRequest:(CDVInvokedUrlCommand *)command
 {
     SendAuthReq* req =[[SendAuthReq alloc] init];
-
+    
     // scope
     req.scope = [command.arguments objectAtIndex:0];
     if ([command.arguments count] > 0)
@@ -115,7 +115,7 @@
     self.wechatAppId = wechatAppId;
     
     [WXApi registerApp:wechatAppId];
-
+    
     NSLog(@"Register wechat app: %@", wechatAppId);
 }
 
@@ -231,40 +231,40 @@
             mediaObject = [WXAppExtendObject object];
             ((WXAppExtendObject*)mediaObject).extInfo = [media objectForKey:@"extInfo"];
             ((WXAppExtendObject*)mediaObject).url = [media objectForKey:@"url"];
-        break;
-    
+            break;
+            
         case CDVWXSharingTypeEmotion:
             mediaObject = [WXEmoticonObject object];
             ((WXEmoticonObject*)mediaObject).emoticonData = [self getNSDataFromURL:[media objectForKey:@"emotion"]];
-        break;
-        
+            break;
+            
         case CDVWXSharingTypeFile:
             mediaObject = [WXFileObject object];
             ((WXFileObject*)mediaObject).fileData = [self getNSDataFromURL:[media objectForKey:@"file"]];
-        break;
-        
+            break;
+            
         case CDVWXSharingTypeImage:
             mediaObject = [WXImageObject object];
             ((WXImageObject*)mediaObject).imageData = [self getNSDataFromURL:[media objectForKey:@"image"]];
-        break;
-        
+            break;
+            
         case CDVWXSharingTypeMusic:
             mediaObject = [WXMusicObject object];
             ((WXMusicObject*)mediaObject).musicUrl = [media objectForKey:@"musicUrl"];
             ((WXMusicObject*)mediaObject).musicDataUrl = [media objectForKey:@"musicDataUrl"];
-        break;
-        
+            break;
+            
         case CDVWXSharingTypeVideo:
             mediaObject = [WXVideoObject object];
             ((WXVideoObject*)mediaObject).videoUrl = [media objectForKey:@"videoUrl"];
-        break;
-        
+            break;
+            
         case CDVWXSharingTypeWebPage:
         default:
-        mediaObject = [WXWebpageObject object];
-        ((WXWebpageObject *)mediaObject).webpageUrl = [media objectForKey:@"webpageUrl"];
+            mediaObject = [WXWebpageObject object];
+            ((WXWebpageObject *)mediaObject).webpageUrl = [media objectForKey:@"webpageUrl"];
     }
-
+    
     wxMediaMessage.mediaObject = mediaObject;
     return wxMediaMessage;
 }
@@ -272,10 +272,13 @@
 - (NSData *)getNSDataFromURL:(NSString *)url
 {
     NSData *data = nil;
-
+    
     if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"])
     {
         data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+    }else if([url containsString:@"temp:"]){
+        url =  [NSTemporaryDirectory() stringByAppendingPathComponent:[url componentsSeparatedByString:@"temp:"][1]];
+        data = [NSData dataWithContentsOfFile:url];
     }
     else
     {

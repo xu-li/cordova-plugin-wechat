@@ -87,6 +87,7 @@
         </config-file>
 
         <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
+        <source-file src="src/android/Util.java" target-dir="src/xu/li/cordova/wechat" />
         <source-file src="src/android/libammsdk.jar" target-dir="libs" />
         <!--
             微信需要回调app的package name下的wxapi/WXEntryActivity.java，所以使用钩子 (hook) 脚本android-install.js添加到你的项目 id 对应的文件夹中,
