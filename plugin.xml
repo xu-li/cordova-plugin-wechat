@@ -64,7 +64,7 @@
 
     <!-- android -->
     <platform name="android">
-        <hook type="after_plugin_rm" src="scripts/android-install.js" />
+        <hook type="after_plugin_add" src="scripts/android-install.js" />
         <hook type="before_plugin_rm" src="scripts/android-install.js" />
 
         <config-file target="res/xml/config.xml" parent="/*">
