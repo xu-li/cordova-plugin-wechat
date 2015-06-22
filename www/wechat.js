@@ -71,9 +71,5 @@ module.exports = {
         }
 
         return exec(onSuccess, onError, "Wechat", "sendAuthRequest", [scope, state]);
-    },
-    
-    wxPay: function(message, onSuccess, onError) {
-        exec(onSuccess, onError, "Wechat", "wxPay", [message]);
     }
 };
