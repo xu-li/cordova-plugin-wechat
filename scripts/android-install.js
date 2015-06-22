@@ -1,50 +1,47 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-
 module.exports = function (context) {
-    var options = context.opts;
-    var projectConfigFile = options.projectRoot + '/config.xml';
-    
-    var projectIdRegex = /<widget[^>]*\sid=(["'])((?:(?!\1|\s).)+)/i;
-    
-    var configXml = fs.readFileSync(projectConfigFile, 'utf-8');
-    
-    var projectId = (configXml.match(projectIdRegex) || [])[2];
-    
-    if (!projectId) {
-        throw new Error('missing project id');
+    var path         = context.requireCordovaModule('path'),
+        fs           = context.requireCordovaModule('fs'),
+        shell        = context.requireCordovaModule('shelljs'),
+        projectRoot  = context.opts.projectRoot,
+        ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
+        config       = new ConfigParser(path.join(context.opts.projectRoot, "config.xml")),
+        packageName = config.android_packageName() || config.packageName();
+
+    console.info("Running android-install.Hook: " + context.hook + ", Package: " + packageName + ", Path: " + projectRoot + ".");
+
+    if (!packageName) {
+        console.error("Package name could not be found!");
+        return ;
     }
-    
-    var wechatEntryFile = 'WXEntryActivity.java';
-    var androidSrcDir = options.projectRoot + '/platforms/android/src/';
-    var wxapiDir = projectId.replace(/\./g, '/') + '/wxapi/';
-        
-    var entryJavaFileTarget = androidSrcDir + wxapiDir + wechatEntryFile;
-    
-    if (context.hook == 'after_plugin_install') {
-        var entryJavaFile = options.plugin.dir + '/src/android/' + wechatEntryFile;
-        var entryJavaCode = fs.readFileSync(entryJavaFile, 'utf-8');
-        
-        entryJavaCode = entryJavaCode.replace(/^package .+/m, 'package ' + projectId + '.wxapi;');
-        
-        var dirPartRegex = /[^\\\/]+[\\\/]*/g;
-        var dirPartGroups;
-        var dirToCreate = androidSrcDir;
-        
-        while (dirPartGroups = dirPartRegex.exec(wxapiDir)) {
-            dirToCreate += dirPartGroups[0];
-            
-            if (!fs.existsSync(dirToCreate)) {
-                fs.mkdirSync(dirToCreate);
-            }
-        }
-        
-        fs.writeFileSync(entryJavaFileTarget, entryJavaCode);
-    } else {
+
+    // android platform available?
+    if (context.opts.cordova.platforms.indexOf("android") === -1) {
+        console.info("Android platform has not been added.");
+        return ;
+    }
+
+    var targetDir  = path.join(projectRoot, "platforms", "android", "src", packageName.replace(/\./g, path.sep), "wxapi");
+        targetFile = path.join(targetDir, "WXEntryActivity.java");
+
+    if (['after_plugin_add', 'after_plugin_install', 'after_platform_add'].indexOf(context.hook) === -1) {
+        // remove it?
         try {
-            fs.unlinkSync(entryJavaFileTarget);
-            fs.rmdirSync(androidSrcDir + wxapiDir);
-        } catch (e) { }
+            fs.unlinkSync(targetFile);
+        } catch (err) {}
+    } else {
+        // create directory
+        shell.mkdir('-p', targetDir);
+
+        // sync the content
+        fs.readFile(path.join(context.opts.plugin.dir, 'src', 'android', 'WXEntryActivity.java'), {encoding: 'utf-8'}, function (err, data) {
+            if (err) {
+                throw err;
+            }
+
+            data = data.replace(/^package __PACKAGE_NAME__;/m, 'package ' + packageName + '.wxapi;');
+            fs.writeFileSync(targetFile, data);
+        });
     }
 };
