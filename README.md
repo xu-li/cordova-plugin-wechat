@@ -10,21 +10,15 @@ Share title, description, image, and link to wechat moment(朋友圈)
 
 See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
 
-# Install(iOS)
+# Install
 
 1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
 
 2. Add ```<preference name="wechatappid" value="YOUR_WECHAT_APP_ID" />``` in your config.xml
 
-3. ```cordova build ios```
+3. ```cordova build ios``` or ```cordova build android```
 
-4. Change the URL Type using XCode
-
-# Note: Install(Android) 
-Inspired by https://github.com/vilic/cordova-plugin-wechat
-Wechat needs to callback to "your.package.name.wxapi.WXEntryActivity" to handle response. Since the package name is determined when you install the packag.java, so we use hook to call android-install.js to do the work.
-I found some older version of cordova(ionic 1.3.0) doesn't trigger this js, so if you found this file isn't copied, consider upgrade Cordova.
-
+4. (iOS only)Change the URL Type using XCode
 
 # Usage
 
@@ -106,8 +100,7 @@ A: Please make sure "wechatappid" is added in ```config.xml```
 
 Q: After sharing in wechat, it will not get back to my app.
 
-A: Please make sure the URL Type is correct(iOS)
-
+A: (iOS)Please make sure the URL Type is correct. (Android) Your [app signature](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318060&token=&lang=zh_CN) is correct.
 
 # TODO
 
