@@ -25,7 +25,8 @@ public class Wechat extends CordovaPlugin {
     public static final String TAG = "Cordova.Plugin.Wechat";
 
     public static final String WXAPPID_PROPERTY_KEY = "wechatappid";
-
+    public static final String WECHAT_APP_ID = "wechat_app_id";
+    
     public static final String ERROR_WECHAT_NOT_INSTALLED = "未安装微信";
     public static final String ERROR_INVALID_PARAMETERS = "参数错误";
     public static final String ERROR_USER_CANCEL = "用户点击取消并返回";
@@ -65,6 +66,17 @@ public class Wechat extends CordovaPlugin {
     public static IWXAPI wxAPI;
     public static CallbackContext currentCallbackContext;
 
+    @Override
+    protected void pluginInitialize() {
+        // TODO Auto-generated method stub
+        super.pluginInitialize();
+        if (wxAPI == null) {
+
+            String appId = webView.getPreferences().getString(WECHAT_APP_ID, "");
+            wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), appId, true);
+        }
+        wxAPI.registerApp(webView.getPreferences().getString(WECHAT_APP_ID, ""));
+    }
     @Override
     public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
