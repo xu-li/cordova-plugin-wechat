@@ -12,13 +12,11 @@ See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wech
 
 # Install
 
-1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
+1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat  --variable WECHAT_APP_ID=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
 
-2. Add ```<preference name="wechatappid" value="YOUR_WECHAT_APP_ID" />``` in your config.xml
+2. ```cordova build ios``` or ```cordova build android```
 
-3. ```cordova build ios``` or ```cordova build android```
-
-4. (iOS only)Change the URL Type using XCode
+3. (iOS only) if your cordova version <5.1.1,check the URL Type using XCode
 
 # Usage
 
