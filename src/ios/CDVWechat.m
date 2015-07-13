@@ -11,7 +11,13 @@
 @implementation CDVWechat
 
 #pragma mark "API"
-
+- (void)pluginInitialize {
+    NSString* appId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
+    if(appId){
+        self.wechatAppId = appId;
+        [WXApi registerApp: appId];
+    }   
+}
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[WXApi isWXAppInstalled]];
@@ -109,16 +115,6 @@
         [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
     }
 }
-
-- (void)registerApp:(NSString *)wechatAppId
-{
-    self.wechatAppId = wechatAppId;
-    
-    [WXApi registerApp:wechatAppId];
-    
-    NSLog(@"Register wechat app: %@", wechatAppId);
-}
-
 #pragma mark "WXApiDelegate"
 
 /**

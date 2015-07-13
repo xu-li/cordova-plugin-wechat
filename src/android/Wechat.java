@@ -71,6 +71,17 @@ public class Wechat extends CordovaPlugin {
     public static CallbackContext currentCallbackContext;
 
     @Override
+    protected void pluginInitialize() {
+        // TODO Auto-generated method stub
+        super.pluginInitialize();
+        if (wxAPI == null) {
+
+            String appId = webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, "");
+            wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), appId, true);
+        }
+        wxAPI.registerApp(webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, ""));
+    }
+    @Override
     public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
 

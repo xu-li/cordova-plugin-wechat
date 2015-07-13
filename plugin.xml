@@ -14,7 +14,12 @@
 
     <!-- add this to your config.xml -->
     <!-- <preference name="WechatAppId" value="YOUR_WECHAT_APP_ID_HERE" /> -->
-
+    <preference name="WechatAppId" />
+    <!--require cordova version -->
+    <engines>
+        <engine name="cordova" version=">=3.5.0" />
+    </engines>
+      <!-- js module-->
     <js-module src="www/wechat.js" name="Wechat">
         <clobbers target="Wechat" />
     </js-module>
@@ -26,6 +31,7 @@
                 <param name="ios-package" value="CDVWechat"/>
                 <param name="onload" value="true" />
             </feature>
+            <preference name="WechatAppId" value="$WechatAppId"/>        
         </config-file>
 
         <config-file target="*-Info.plist" parent="CFBundleURLTypes">
@@ -37,7 +43,7 @@
                     <string>wechat</string>
                     <key>CFBundleURLSchemes</key>
                     <array>
-                        <string>YOUR_WECHAT_APP_ID</string>
+                        <string>$WechatAppId</string>
                     </array>
                 </dict>
             </array>
@@ -46,8 +52,6 @@
         <!-- Plugin source code -->
         <header-file src="src/ios/CDVWechat.h" />
         <source-file src="src/ios/CDVWechat.m" />
-        <header-file src="src/ios/AppDelegate+CDVWechat.h" />
-        <source-file src="src/ios/AppDelegate+CDVWechat.m" />
 
         <!-- Wechat Official -->
         <header-file src="src/ios/libs/WeChatSDK_1.5/WeChatSDK_1.5/WXApi.h" />
@@ -73,6 +77,7 @@
             <feature name="Wechat">
                 <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
             </feature>
+            <preference name="WechatAppId" value="$WechatAppId"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -80,16 +85,16 @@
               android:name=".wxapi.WXEntryActivity"
               android:label="@string/launcher_name"
               android:exported="true">
-            <intent-filter>
-              <action android:name="android.intent.action.VIEW"/>
-              <category android:name="android.intent.category.DEFAULT"/>
-              <data android:scheme="Anything"/>
-            </intent-filter>
+              <intent-filter>
+                  <action android:name="android.intent.action.VIEW"/>
+                  <category android:name="android.intent.category.DEFAULT"/>
+                  <data android:scheme="$WechatAppId"/>
+              </intent-filter>
           </activity>
-        </config-file>
+      </config-file>
 
-        <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
-        <source-file src="src/android/Util.java" target-dir="src/xu/li/cordova/wechat" />
-        <source-file src="src/android/libammsdk.jar" target-dir="libs" />
-    </platform>
+      <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
+      <source-file src="src/android/Util.java" target-dir="src/xu/li/cordova/wechat" />
+      <source-file src="src/android/libammsdk.jar" target-dir="libs" />
+  </platform>
 </plugin>

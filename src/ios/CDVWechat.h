@@ -28,6 +28,5 @@ enum  CDVWechatSharingType {
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command;
 - (void)share:(CDVInvokedUrlCommand *)command;
 - (void)sendAuthRequest:(CDVInvokedUrlCommand *)command;
-- (void)registerApp:(NSString *)wechatAppId;
 
 @end
