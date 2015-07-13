@@ -12,7 +12,7 @@ See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wech
 
 # Install
 
-1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat  --variable WECHAT_APP_ID=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
+1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat  --variable WechatAppId=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
 
 2. ```cordova build ios``` or ```cordova build android```
 

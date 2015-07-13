@@ -14,7 +14,7 @@
 
     <!-- add this to your config.xml -->
     <!-- <preference name="WechatAppId" value="YOUR_WECHAT_APP_ID_HERE" /> -->
-    <preference name="WECHAT_APP_ID" />
+    <preference name="WechatAppId" />
     <!--require cordova version -->
     <engines>
         <engine name="cordova" version=">=3.5.0" />
@@ -31,7 +31,7 @@
                 <param name="ios-package" value="CDVWechat"/>
                 <param name="onload" value="true" />
             </feature>
-            <preference name="WECHAT_APP_ID" value="$WECHAT_APP_ID"/>        
+            <preference name="WechatAppId" value="$WechatAppId"/>        
         </config-file>
 
         <config-file target="*-Info.plist" parent="CFBundleURLTypes">
@@ -43,7 +43,7 @@
                     <string>wechat</string>
                     <key>CFBundleURLSchemes</key>
                     <array>
-                        <string>$WECHAT_APP_ID</string>
+                        <string>$WechatAppId</string>
                     </array>
                 </dict>
             </array>
@@ -77,7 +77,7 @@
             <feature name="Wechat">
                 <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
             </feature>
-            <preference name="WECHAT_APP_ID" value="$WECHAT_APP_ID"/>
+            <preference name="WechatAppId" value="$WechatAppId"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -88,7 +88,7 @@
               <intent-filter>
                   <action android:name="android.intent.action.VIEW"/>
                   <category android:name="android.intent.category.DEFAULT"/>
-                  <data android:scheme="$WECHAT_APP_ID"/>
+                  <data android:scheme="$WechatAppId"/>
               </intent-filter>
           </activity>
       </config-file>

@@ -12,7 +12,7 @@
 
 #pragma mark "API"
 - (void)pluginInitialize {
-    NSString* appId = [[self.commandDelegate settings] objectForKey:@"wechat_app_id"];
+    NSString* appId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
     if(appId){
         self.wechatAppId = appId;
         [WXApi registerApp: appId];

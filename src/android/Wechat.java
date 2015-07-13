@@ -1,5 +1,6 @@
 package xu.li.cordova.wechat;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -20,13 +21,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 public class Wechat extends CordovaPlugin {
 
     public static final String TAG = "Cordova.Plugin.Wechat";
 
     public static final String WXAPPID_PROPERTY_KEY = "wechatappid";
-    public static final String WECHAT_APP_ID = "wechat_app_id";
-    
+
     public static final String ERROR_WECHAT_NOT_INSTALLED = "未安装微信";
     public static final String ERROR_INVALID_PARAMETERS = "参数错误";
     public static final String ERROR_USER_CANCEL = "用户点击取消并返回";
@@ -72,10 +76,10 @@ public class Wechat extends CordovaPlugin {
         super.pluginInitialize();
         if (wxAPI == null) {
 
-            String appId = webView.getPreferences().getString(WECHAT_APP_ID, "");
+            String appId = webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, "");
             wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), appId, true);
         }
-        wxAPI.registerApp(webView.getPreferences().getString(WECHAT_APP_ID, ""));
+        wxAPI.registerApp(webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, ""));
     }
     @Override
     public boolean execute(String action, JSONArray args,
@@ -229,7 +233,7 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WX_SHARING_IMAGE:
                     mediaObject = new WXImageObject();
-                    String image = getImageURL(message, KEY_ARG_MESSAGE_MEDIA_IMAGE);
+                    String image = getImageURL(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE);
                     ((WXImageObject) mediaObject).setImagePath(image);
                 case TYPE_WX_SHARING_MUSIC:
                     break;
@@ -282,9 +286,39 @@ public class Wechat extends CordovaPlugin {
         try {
             url = message.getString(key);
 
-            if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) {
+            if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://") || url.startsWith("data:")) {
+                return url;
+            } else if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) { // external path
                 String externalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
                 url = externalStoragePath + url.substring(EXTERNAL_STORAGE_IMAGE_PREFIX.length());
+            } else if (!url.startsWith("/")) { // relative path
+                Context context = cordova.getActivity().getApplicationContext();
+
+                File f = new File(context.getCacheDir() + "/assets/" + url);
+                if (!f.exists()) {
+
+                    File parent = f.getParentFile();
+                    if (!parent.exists()) {
+                        parent.mkdirs();
+                    }
+
+                    // save it to cache
+                    try {
+                        InputStream is = context.getAssets().open(url);
+                        int size = is.available();
+                        byte[] buffer = new byte[size];
+                        is.read(buffer);
+                        is.close();
+
+                        FileOutputStream fos = new FileOutputStream(f);
+                        fos.write(buffer);
+                        fos.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                url = f.getAbsolutePath();
             }
         } catch (JSONException e) {
             e.printStackTrace();
