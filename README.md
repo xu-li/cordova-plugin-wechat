@@ -12,7 +12,7 @@ See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wech
 
 # Install
 
-1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat  --variable WechatAppId=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
+1. ```cordova plugin add https://github.com/xu-li/cordova-plugin-wechat  --variable wechatappid=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
 
 2. ```cordova build ios``` or ```cordova build android```
 
@@ -91,10 +91,6 @@ Wechat.share({
 ```
 
 # FAQ
-
-Q: "Wechat not installed", even installed
-
-A: Please make sure "wechatappid" is added in ```config.xml``` 
 
 Q: After sharing in wechat, it will not get back to my app.
 
