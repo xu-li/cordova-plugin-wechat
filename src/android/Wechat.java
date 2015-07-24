@@ -1,10 +1,10 @@
 package xu.li.cordova.wechat;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
@@ -21,9 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Wechat extends CordovaPlugin {
 
@@ -81,6 +82,7 @@ public class Wechat extends CordovaPlugin {
         }
         wxAPI.registerApp(webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, ""));
     }
+
     @Override
     public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
@@ -214,7 +216,7 @@ public class Wechat extends CordovaPlugin {
             // thumbnail
             Bitmap thumbnail = getBitmap(message, KEY_ARG_MESSAGE_THUMB);
             if (thumbnail != null) {
-                wxMediaMessage.thumbData = Util.bmpToByteArray(thumbnail, true);
+                wxMediaMessage.setThumbImage(thumbnail);
             }
 
             // check types
@@ -232,9 +234,7 @@ public class Wechat extends CordovaPlugin {
                     break;
 
                 case TYPE_WX_SHARING_IMAGE:
-                    mediaObject = new WXImageObject();
-                    String image = getImageURL(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE);
-                    ((WXImageObject) mediaObject).setImagePath(image);
+                    mediaObject = new WXImageObject(getBitmap(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE));
                 case TYPE_WX_SHARING_MUSIC:
                     break;
 
@@ -243,9 +243,8 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WX_SHARING_WEBPAGE:
                 default:
-                    mediaObject = new WXWebpageObject();
-                    ((WXWebpageObject) mediaObject).webpageUrl = media
-                            .getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL);
+                    mediaObject = new WXWebpageObject(media
+                            .getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL));
             }
         }
 
@@ -280,64 +279,40 @@ public class Wechat extends CordovaPlugin {
         return type + System.currentTimeMillis();
     }
 
-    protected String getImageURL(JSONObject message, String key) {
+    protected Bitmap getBitmap(JSONObject message, String key) {
+        HttpURLConnection conn = null;
+        InputStream is = null;
+        Bitmap bmp = null;
         String url = null;
 
         try {
             url = message.getString(key);
 
-            if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://") || url.startsWith("data:")) {
-                return url;
-            } else if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) { // external path
-                String externalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                url = externalStoragePath + url.substring(EXTERNAL_STORAGE_IMAGE_PREFIX.length());
-            } else if (!url.startsWith("/")) { // relative path
-                Context context = cordova.getActivity().getApplicationContext();
-
-                File f = new File(context.getCacheDir() + "/assets/" + url);
-                if (!f.exists()) {
-
-                    File parent = f.getParentFile();
-                    if (!parent.exists()) {
-                        parent.mkdirs();
-                    }
-
-                    // save it to cache
-                    try {
-                        InputStream is = context.getAssets().open(url);
-                        int size = is.available();
-                        byte[] buffer = new byte[size];
-                        is.read(buffer);
-                        is.close();
-
-                        FileOutputStream fos = new FileOutputStream(f);
-                        fos.write(buffer);
-                        fos.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
+                conn = (HttpURLConnection)new URL(url).openConnection();
+                is = conn.getInputStream();
+            } else {
+                if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) { // external path
+                    url = Environment.getExternalStorageDirectory().getAbsolutePath() + url.substring(EXTERNAL_STORAGE_IMAGE_PREFIX.length());
+                    is = new FileInputStream(url);
+                } else if (!url.startsWith("/")) { // relative path
+                    is = cordova.getActivity().getApplicationContext().getAssets().open(url);
+                } else {
+                    is = new FileInputStream(url);
                 }
-
-                url = f.getAbsolutePath();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        return url;
-    }
-
-    protected Bitmap getBitmap(JSONObject message, String key) {
-        String url = getImageURL(message, key);
-
-        if (url != null) {
-            try {
-                return BitmapFactory.decodeFile(url);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to decode image at " + url, e);
+            bmp = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to decode image at " + url, e);
+            bmp = null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
             }
         }
 
-        return null;
+        return bmp;
     }
 }
