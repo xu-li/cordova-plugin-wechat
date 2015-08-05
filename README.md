@@ -98,7 +98,7 @@ A: (iOS)Please make sure the URL Type is correct. (Android) Your [app signature]
 
 Q: Rejected by Apple app store claiming we should provide ways to allow people to authenticate/login with WeChat for people without installing the WeChat app.
 
-You can hide the Wechat Login button if the wechat app is not installed.
+A: You can hide the Wechat Login button if the wechat app is not installed.
 
 ```Javascript
 $scope.showWechatLogin = false;
