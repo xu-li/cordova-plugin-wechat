@@ -96,6 +96,25 @@ Q: After sharing in wechat, it will not get back to my app.
 
 A: (iOS)Please make sure the URL Type is correct. (Android) Your [app signature](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419318060&token=&lang=zh_CN) is correct.
 
+Q: Rejected by Apple app store claiming we should provide ways to allow people to authenticate/login with WeChat for people without installing the WeChat app.
+
+You can hide the Wechat Login button if the wechat app is not installed.
+
+```Javascript
+$scope.showWechatLogin = false;
+if (typeof Wechat !== 'undefined') {
+    Wechat.isInstalled(function (installed) {
+        if (installed) {
+             // Only show wechat login button if the Wechat App was detected
+            $scope.showWechatLogin = true;
+        }
+    }, function (reason) {
+    });
+}
+```
+(Thanks @winsonchan and @Jeff-Tian)
+
+
 # TODO
 
 1. ~~Add android version~~
