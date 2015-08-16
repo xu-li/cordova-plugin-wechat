@@ -12,6 +12,7 @@ import com.tencent.mm.sdk.modelmsg.WXImageObject;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
@@ -71,15 +72,17 @@ public class Wechat extends CordovaPlugin {
     public static IWXAPI wxAPI;
     public static CallbackContext currentCallbackContext;
 
+    protected String appId;
+
     @Override
     protected void pluginInitialize() {
-        // TODO Auto-generated method stub
-        super.pluginInitialize();
-        if (wxAPI == null) {
 
-            String appId = webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, "");
-            wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), appId, true);
+        super.pluginInitialize();
+
+        if (wxAPI == null) {
+            wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), getAppId(), true);
         }
+
         wxAPI.registerApp(webView.getPreferences().getString(WXAPPID_PROPERTY_KEY, ""));
     }
 
@@ -93,9 +96,12 @@ public class Wechat extends CordovaPlugin {
             return share(args, callbackContext);
         } else if (action.equals("sendAuthRequest")) {
             return sendAuthRequest(args, callbackContext);
+        } else if (action.equals("sendPaymentRequest")) {
+            return sendPaymentRequest(args, callbackContext);
         } else if (action.equals("isWXAppInstalled")) {
             return isInstalled(callbackContext);
         }
+
         return super.execute(action, args, callbackContext);
     }
 
@@ -161,18 +167,58 @@ public class Wechat extends CordovaPlugin {
     protected boolean sendAuthRequest(JSONArray args, CallbackContext callbackContext) {
         final IWXAPI api = getWXAPI(true);
 
+        int length = args.length();
         final SendAuth.Req req = new SendAuth.Req();
-        req.state = "wechat_auth";
+        try {
+            if (length == 1) {
+                req.scope = args.getString(0);
+            } else if (length == 2) {
+                req.scope = args.getString(0);
+                req.state = args.getString(1);
+            } else {
+                req.scope = "snsapi_userinfo";
+                req.state = "wechat";
+            }
+        } catch (Exception e) {
+            req.scope = "snsapi_userinfo";
+            req.state = "wechat";
+
+            Log.e(TAG, e.getMessage());
+        }
+
+        api.sendReq(req);
+        currentCallbackContext = callbackContext;
+
+        return true;
+    }
+
+    protected boolean sendPaymentRequest(JSONArray args, CallbackContext callbackContext) {
+
+        final IWXAPI api = getWXAPI(true);
 
         // check if # of arguments is correct
-        if (args.length() > 0) {
-            try {
-                req.scope = args.getString(0);
-            } catch (Exception e) {
-                Log.e(TAG, "invalid parameter in sendAuthRequest.", e);
-            }
-        } else {
-            req.scope = "snsapi_userinfo";
+        if (args.length() != 1) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+
+        PayReq req = new PayReq();
+
+        try {
+            final JSONObject params = args.getJSONObject(0);
+
+            req.openId = getAppId();
+            req.partnerId = params.getString("mch_id");
+            req.prepayId = params.getString("prepay_id");
+            req.nonceStr = params.getString("nonce");
+            req.timeStamp = params.getString("timestamp");
+            req.sign = params.getString("sign");
+            req.packageValue = "Sign=WXPay";
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
         }
 
         api.sendReq(req);
@@ -258,7 +304,7 @@ public class Wechat extends CordovaPlugin {
     }
 
     protected IWXAPI getWXAPI(boolean register) {
-        String appId = preferences.getString(WXAPPID_PROPERTY_KEY, "");
+        String appId = getAppId();
 
         if (wxAPI == null) {
             wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), appId, true);
@@ -314,5 +360,13 @@ public class Wechat extends CordovaPlugin {
         }
 
         return bmp;
+    }
+
+    protected String getAppId() {
+        if (this.appId == null) {
+            this.appId = preferences.getString(WXAPPID_PROPERTY_KEY, "");
+        }
+
+        return this.appId;
     }
 }

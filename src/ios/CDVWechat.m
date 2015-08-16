@@ -18,6 +18,7 @@
         [WXApi registerApp: appId];
     }   
 }
+
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[WXApi isWXAppInstalled]];
@@ -92,7 +93,6 @@
     SendAuthReq* req =[[SendAuthReq alloc] init];
     
     // scope
-    req.scope = [command.arguments objectAtIndex:0];
     if ([command.arguments count] > 0)
     {
         req.scope = [command.arguments objectAtIndex:0];
@@ -108,13 +108,57 @@
         req.state = [command.arguments objectAtIndex:1];
     }
     
-    if ([WXApi sendReq:req]) {
+    if ([WXApi sendReq:req])
+    {
         // save the callback id
         self.currentCallbackId = command.callbackId;
-    } else {
+    }
+    else
+    {
         [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
     }
 }
+
+- (void)sendPaymentRequest:(CDVInvokedUrlCommand *)command
+{
+    // check arguments
+    NSDictionary *params = [command.arguments objectAtIndex:0];
+    if (!params)
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"参数格式错误"];
+        return ;
+    }
+    
+    // check required parameters
+    for (NSString *key in @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"package", @"sign"])
+    {
+        if (![params objectForKey:key])
+        {
+            [self failWithCallbackID:command.callbackId withMessage:@"参数格式错误"];
+            return ;
+        }
+    }
+    
+    PayReq *req = [[PayReq alloc] init];
+    req.openID = self.wechatAppId;
+    req.partnerId = params[@"mch_id"];
+    req.prepayId = params[@"prepay_id"];
+    req.timeStamp = [params[@"timestamp"] intValue];
+    req.nonceStr = params[@"nonce"];
+    req.package = params[@"package"];
+    req.sign = params[@"sign"];
+
+    if ([WXApi sendReq:req])
+    {
+        // save the callback id
+        self.currentCallbackId = command.callbackId;
+    }
+    else
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
+    }
+}
+
 #pragma mark "WXApiDelegate"
 
 /**
@@ -272,7 +316,9 @@
     if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"])
     {
         data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
-    }else if([url containsString:@"temp:"]){
+    }
+    else if ([url rangeOfString:@"temp:"].length != 0)
+    {
         url =  [NSTemporaryDirectory() stringByAppendingPathComponent:[url componentsSeparatedByString:@"temp:"][1]];
         data = [NSData dataWithContentsOfFile:url];
     }
