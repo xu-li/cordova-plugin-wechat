@@ -130,7 +130,7 @@
     }
     
     // check required parameters
-    for (NSString *key in @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"package", @"sign"])
+    for (NSString *key in @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign"])
     {
         if (![params objectForKey:key])
         {
@@ -140,12 +140,11 @@
     }
     
     PayReq *req = [[PayReq alloc] init];
-    req.openID = self.wechatAppId;
     req.partnerId = params[@"mch_id"];
     req.prepayId = params[@"prepay_id"];
     req.timeStamp = [params[@"timestamp"] intValue];
     req.nonceStr = params[@"nonce"];
-    req.package = params[@"package"];
+    req.package = @"Sign=WXPay";
     req.sign = params[@"sign"];
 
     if ([WXApi sendReq:req])

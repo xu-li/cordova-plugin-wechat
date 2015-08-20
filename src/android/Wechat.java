@@ -207,7 +207,7 @@ public class Wechat extends CordovaPlugin {
         try {
             final JSONObject params = args.getJSONObject(0);
 
-            req.openId = getAppId();
+            req.appId = getAppId();
             req.partnerId = params.getString("mch_id");
             req.prepayId = params.getString("prepay_id");
             req.nonceStr = params.getString("nonce");
