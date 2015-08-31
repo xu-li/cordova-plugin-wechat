@@ -13,7 +13,7 @@ import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import xu.li.cordova.wechat.Wechat;
+import xu.li.cordova.wechat.Wechat.wxapi;
 
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
