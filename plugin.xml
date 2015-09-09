@@ -90,7 +90,8 @@
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Wechat">
-                <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
+              <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
+              <param name="onload" value="true" />
             </feature>
             <preference name="WECHATAPPID" value="$WECHATAPPID"/>
         </config-file>
@@ -103,6 +104,14 @@
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/*">
+          <uses-permission android:name="android.permission.INTERNET"/>
+          <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+          <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+          <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+          <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+        </config-file>
+        
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity
                 android:name=".wxapi.WXEntryActivity"
