@@ -46,6 +46,18 @@
                     <array>
                         <string>$WECHATAPPID</string>
                     </array>
+
+                    <key>LSApplicationQueriesSchemes</key>
+                    <array>
+                        <string>weixin</string>
+                        <string>wechat</string>
+                    </array>
+
+                    <key>NSAppTransportSecurity</key>
+                    <dict>
+                        <key>NSAllowsArbitraryLoads</key>
+                        <true/>
+                    </dict>
                 </dict>
             </array>
         </config-file>
