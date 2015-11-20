@@ -255,7 +255,10 @@
     wxMediaMessage.messageAction = [message objectForKey:@"messageAction"];
     if ([message objectForKey:@"thumb"])
     {
-        [wxMediaMessage setThumbImage:[self getUIImageFromURL:[message objectForKey:@"thumb"]]];
+        
+        NSString* thumbData = [message objectForKey:@"thumb"];
+        wxMediaMessage.thumbData = [self decodeBase64:thumbData];
+        //[wxMediaMessage setThumbImage:[self getUIImageFromURL:[message objectForKey:@"thumb"]]];
     }
     
     // media parameters
@@ -306,6 +309,12 @@
     
     wxMediaMessage.mediaObject = mediaObject;
     return wxMediaMessage;
+}
+
+- (NSData *) decodeBase64 : (NSString*) base64String {
+    NSString *dataUrl = [NSString stringWithFormat:@"data:application/octet-stream;base64,%@",base64String];
+    NSURL *url = [NSURL URLWithString:dataUrl];
+    return [NSData dataWithContentsOfURL:url];
 }
 
 - (NSData *)getNSDataFromURL:(NSString *)url

@@ -3,6 +3,7 @@ package xu.li.cordova.wechat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
@@ -142,21 +143,30 @@ public class Wechat extends CordovaPlugin {
             req.scene = SendMessageToWX.Req.WXSceneTimeline;
         }
 
-        // run in background
-        cordova.getThreadPool().execute(new Runnable() {
+        try {
+            req.message = buildSharingMessage(params);
+        } catch (JSONException e) {
+            Log.e(TAG, "Failed to build message." + e);
+        }
 
-            @Override
-            public void run() {
-                try {
-                    req.message = buildSharingMessage(params);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Failed to build message." + e);
-                }
+        api.sendReq(req);
+        Log.e(TAG, "Message sent.");
 
-                api.sendReq(req);
-                Log.d(TAG, "Message sent.");
-            }
-        });
+//        // run in background
+//        cordova.getThreadPool().execute(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    req.message = buildSharingMessage(params);
+//                } catch (JSONException e) {
+//                    Log.e(TAG, "Failed to build message." + e);
+//                }
+//
+//                api.sendReq(req);
+//                Log.d(TAG, "Message sent.");
+//            }
+//        });
 
         // save the current callback context
         currentCallbackContext = callbackContext;
@@ -240,7 +250,7 @@ public class Wechat extends CordovaPlugin {
 
     protected WXMediaMessage buildSharingMessage(JSONObject params)
             throws JSONException {
-        Log.d(TAG, "Start building message.");
+        Log.e(TAG, "Start building message.");
 
         // media parameters
         WXMediaMessage.IMediaObject mediaObject = null;
@@ -260,9 +270,14 @@ public class Wechat extends CordovaPlugin {
                     .getString(KEY_ARG_MESSAGE_DESCRIPTION);
 
             // thumbnail
-            Bitmap thumbnail = getBitmap(message, KEY_ARG_MESSAGE_THUMB);
-            if (thumbnail != null) {
-                wxMediaMessage.setThumbImage(thumbnail);
+//            Bitmap thumbnail = getBitmap(message, KEY_ARG_MESSAGE_THUMB);
+//            if (thumbnail != null) {
+//                wxMediaMessage.setThumbImage(thumbnail);
+//            }
+            String thumbData = message.getString(KEY_ARG_MESSAGE_THUMB);
+            if(thumbData!=null){
+                wxMediaMessage.thumbData = Base64.decode(thumbData,Base64.DEFAULT);
+                Log.e(TAG,"thumbData.length=" + wxMediaMessage.thumbData.length);
             }
 
             // check types
