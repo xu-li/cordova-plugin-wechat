@@ -70,7 +70,7 @@
             req.message = [self buildSharingMessage:message];
             if (![WXApi sendReq:req])
             {
-                [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
+                [self failWithCallbackID:command.callbackId withMessage:@"发送请求失败"];
                 self.currentCallbackId = nil;
             }
         }];
@@ -82,7 +82,7 @@
         
         if (![WXApi sendReq:req])
         {
-            [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
+            [self failWithCallbackID:command.callbackId withMessage:@"发送请求失败"];
             self.currentCallbackId = nil;
         }
     }
@@ -115,7 +115,7 @@
     }
     else
     {
-        [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
+        [self failWithCallbackID:command.callbackId withMessage:@"发送请求失败"];
     }
 }
 
@@ -154,7 +154,7 @@
     }
     else
     {
-        [self failWithCallbackID:command.callbackId withMessage:@"参数错误"];
+        [self failWithCallbackID:command.callbackId withMessage:@"发送请求失败"];
     }
 }
 
@@ -181,7 +181,7 @@
             break;
             
         case WXErrCodeCommon:
-            message = @"普通错误类型";
+            message = @"普通错误";
             break;
             
         case WXErrCodeUserCancel:
@@ -199,6 +199,9 @@
         case WXErrCodeUnsupport:
             message = @"微信不支持";
             break;
+
+        default:
+            message = @"未知错误";
     }
     
     if (success)

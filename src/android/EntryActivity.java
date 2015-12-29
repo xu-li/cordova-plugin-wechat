@@ -25,22 +25,23 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Wechat.wxAPI == null) {
+        if (Wechat.instance.getWxAPI() == null) {
             startMainActivity();
         } else {
-            Wechat.wxAPI.handleIntent(getIntent(), this);
+            Wechat.instance.getWxAPI().handleIntent(getIntent(), this);
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
         setIntent(intent);
 
-        if (Wechat.wxAPI == null) {
+        if (Wechat.instance.getWxAPI() == null) {
             startMainActivity();
         } else {
-            Wechat.wxAPI.handleIntent(intent, this);
+            Wechat.instance.getWxAPI().handleIntent(intent, this);
         }
     }
 
@@ -48,7 +49,7 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
     public void onResp(BaseResp resp) {
         Log.d(Wechat.TAG, resp.toString());
 
-        if (Wechat.currentCallbackContext == null) {
+        if (Wechat.instance.getCurrentCallbackContext() == null) {
             startMainActivity();
             return ;
         }
@@ -62,27 +63,27 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
 
                     case ConstantsAPI.COMMAND_PAY_BY_WX:
                     default:
-                        Wechat.currentCallbackContext.success();
+                        Wechat.instance.getCurrentCallbackContext().success();
                         break;
                 }
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
-                Wechat.currentCallbackContext.error(Wechat.ERROR_USER_CANCEL);
+                Wechat.instance.getCurrentCallbackContext().error(Wechat.ERROR_WECHAT_RESPONSE_USER_CANCEL);
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
-                Wechat.currentCallbackContext.error(Wechat.ERROR_AUTH_DENIED);
+                Wechat.instance.getCurrentCallbackContext().error(Wechat.ERROR_WECHAT_RESPONSE_AUTH_DENIED);
                 break;
             case BaseResp.ErrCode.ERR_SENT_FAILED:
-                Wechat.currentCallbackContext.error(Wechat.ERROR_SENT_FAILED);
+                Wechat.instance.getCurrentCallbackContext().error(Wechat.ERROR_WECHAT_RESPONSE_SENT_FAILED);
                 break;
             case BaseResp.ErrCode.ERR_UNSUPPORT:
-                Wechat.currentCallbackContext.error(Wechat.ERROR_UNSUPPORT);
+                Wechat.instance.getCurrentCallbackContext().error(Wechat.ERROR_WECHAT_RESPONSE_UNSUPPORT);
                 break;
             case BaseResp.ErrCode.ERR_COMM:
-                Wechat.currentCallbackContext.error(Wechat.ERROR_COMMON);
+                Wechat.instance.getCurrentCallbackContext().error(Wechat.ERROR_WECHAT_RESPONSE_COMMON);
                 break;
             default:
-                Wechat.currentCallbackContext.error(Wechat.ERROR_UNKNOWN);
+                Wechat.instance.getCurrentCallbackContext().error(Wechat.ERROR_WECHAT_RESPONSE_UNKNOWN);
                 break;
         }
 
@@ -116,6 +117,6 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
             Log.e(Wechat.TAG, e.getMessage());
         }
 
-        Wechat.currentCallbackContext.success(response);
+        Wechat.instance.getCurrentCallbackContext().success(response);
     }
 }
