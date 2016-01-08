@@ -8,9 +8,14 @@ import android.webkit.URLUtil;
 
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXAppExtendObject;
+import com.tencent.mm.sdk.modelmsg.WXEmojiObject;
+import com.tencent.mm.sdk.modelmsg.WXFileObject;
 import com.tencent.mm.sdk.modelmsg.WXImageObject;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXMusicObject;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
+import com.tencent.mm.sdk.modelmsg.WXVideoObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -58,6 +63,13 @@ public class Wechat extends CordovaPlugin {
     public static final String KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL = "webpageUrl";
     public static final String KEY_ARG_MESSAGE_MEDIA_IMAGE = "image";
     public static final String KEY_ARG_MESSAGE_MEDIA_TEXT = "text";
+    public static final String KEY_ARG_MESSAGE_MEDIA_MUSICURL = "musicUrl";
+    public static final String KEY_ARG_MESSAGE_MEDIA_MUSICDATAURL = "musicDataUrl";
+    public static final String KEY_ARG_MESSAGE_MEDIA_VIDEOURL = "videoUrl";
+    public static final String KEY_ARG_MESSAGE_MEDIA_FILE = "file";
+    public static final String KEY_ARG_MESSAGE_MEDIA_EMOTION = "emotion";
+    public static final String KEY_ARG_MESSAGE_MEDIA_EXTINFO = "extInfo";
+    public static final String KEY_ARG_MESSAGE_MEDIA_URL = "url";
 
     public static final int TYPE_WECHAT_SHARING_APP = 1;
     public static final int TYPE_WECHAT_SHARING_EMOTION = 2;
@@ -322,22 +334,41 @@ public class Wechat extends CordovaPlugin {
 
             switch (type) {
                 case TYPE_WECHAT_SHARING_APP:
+                    WXAppExtendObject appObject = new WXAppExtendObject();
+                    appObject.extInfo = media.getString(KEY_ARG_MESSAGE_MEDIA_EXTINFO);
+                    appObject.filePath = media.getString(KEY_ARG_MESSAGE_MEDIA_URL);
+                    wxMediaMessage.mediaObject = appObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_EMOTION:
+                    WXEmojiObject emoObject = new WXEmojiObject();
+                    emoObject.emojiPath = media.getString(KEY_ARG_MESSAGE_MEDIA_EMOTION);
+                    wxMediaMessage.mediaObject = emoObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_FILE:
+                    WXFileObject fileObject = new WXFileObject();
+                    fileObject.filePath = media.getString(KEY_ARG_MESSAGE_MEDIA_FILE);
+                    wxMediaMessage.mediaObject = fileObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_IMAGE:
                     Bitmap image = getBitmap(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE, 0);
                     mediaObject = new WXImageObject(image);
                     image.recycle();
+                    break;
+
                 case TYPE_WECHAT_SHARING_MUSIC:
+                    WXMusicObject musicObject = new WXMusicObject();
+                    musicObject.musicUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_MUSICURL);
+                    musicObject.musicDataUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_MUSICDATAURL);
+                    wxMediaMessage.mediaObject = musicObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_VIDEO:
+                    WXVideoObject videoObject = new WXVideoObject();
+                    videoObject.videoUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_VIDEOURL);
+                    wxMediaMessage.mediaObject = videoObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_WEBPAGE:

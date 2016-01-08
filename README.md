@@ -120,7 +120,7 @@ See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
 3. ~~Add other media types, including music etc.~~
 
-4. Other APIs
+4. ~~Other APIs~~
 
 5. ~~Android Version update~~
 
