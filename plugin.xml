@@ -3,8 +3,8 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="xu.li.cordova.wechat"
-    version="0.10.2">
+    id="cordova-plugin-wechat"
+    version="1.0.0">
 
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
