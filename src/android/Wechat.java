@@ -261,9 +261,9 @@ public class Wechat extends CordovaPlugin {
 
         try {
             req.appId = getAppId();
-            req.partnerId = params.getString("mch_id");
-            req.prepayId = params.getString("prepay_id");
-            req.nonceStr = params.getString("nonce");
+            req.partnerId = params.has("mch_id") ? params.getString("mch_id") : params.getString("partnerid");
+            req.prepayId = params.has("prepay_id") ? params.getString("prepay_id") : params.getString("prepayid");
+            req.nonceStr = params.has("nonce") ? params.getString("nonce") : params.getString("noncestr");
             req.timeStamp = params.getString("timestamp");
             req.sign = params.getString("sign");
             req.packageValue = "Sign=WXPay";

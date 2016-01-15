@@ -130,7 +130,17 @@
     }
     
     // check required parameters
-    for (NSString *key in @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign"])
+    NSArray *requiredParams;
+    if ([params objectForKey:@"mch_id"])
+    {
+        requiredParams = @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign"];
+    }
+    else
+    {
+        requiredParams = @[@"partnerid", @"prepayid", @"timestamp", @"noncestr", @"sign"];
+    }
+    
+    for (NSString *key in requiredParams)
     {
         if (![params objectForKey:key])
         {
@@ -140,12 +150,12 @@
     }
     
     PayReq *req = [[PayReq alloc] init];
-    req.partnerId = params[@"mch_id"];
-    req.prepayId = params[@"prepay_id"];
-    req.timeStamp = [params[@"timestamp"] intValue];
-    req.nonceStr = params[@"nonce"];
+    req.partnerId = [params objectForKey:requiredParams[0]];
+    req.prepayId = [params objectForKey:requiredParams[1]];
+    req.timeStamp = [[params objectForKey:requiredParams[2]] intValue];
+    req.nonceStr = [params objectForKey:requiredParams[3]];
     req.package = @"Sign=WXPay";
-    req.sign = params[@"sign"];
+    req.sign = [params objectForKey:requiredParams[4]];
 
     if ([WXApi sendReq:req])
     {
