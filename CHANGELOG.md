@@ -1,0 +1,14 @@
+# Change Log
+
+## 1.1.0 - 2016-01-15
+### Added
+- Support Base64 image
+
+### Changed
+- Rename payment parameters
+
+### Fixed
+- Fixed thumbnail image size issue in iOS
+
+## 1.0.0 - 2016-01-08
+- Initial release
