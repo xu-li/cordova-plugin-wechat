@@ -331,6 +331,12 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     {
         data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
     }
+    else if ([url hasPrefix:@"data:image"])
+    {
+        // a base 64 string
+        NSURL *base64URL = [NSURL URLWithString:url];
+        data = [NSData dataWithContentsOfURL:base64URL];
+    }
     else if ([url rangeOfString:@"temp:"].length != 0)
     {
         url =  [NSTemporaryDirectory() stringByAppendingPathComponent:[url componentsSeparatedByString:@"temp:"][1]];

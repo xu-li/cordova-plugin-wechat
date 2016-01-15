@@ -3,6 +3,7 @@ package xu.li.cordova.wechat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
@@ -28,6 +29,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -424,6 +426,15 @@ public class Wechat extends CordovaPlugin {
                 inputStream = new FileInputStream(image);
 
                 Log.d(TAG, String.format("Bitmap was downloaded and cached to %s.", url));
+
+
+            } else if (url.startsWith("data:image")) {  // base64 image
+
+                String imageDataBytes = url.substring(url.indexOf(",") + 1);
+                byte imageBytes[] = Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT);
+                inputStream = new ByteArrayInputStream(imageBytes);
+
+                Log.d(TAG, "Image is in base64 format.");
 
             } else if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) { // external path
 
