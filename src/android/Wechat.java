@@ -339,19 +339,19 @@ public class Wechat extends CordovaPlugin {
                     WXAppExtendObject appObject = new WXAppExtendObject();
                     appObject.extInfo = media.getString(KEY_ARG_MESSAGE_MEDIA_EXTINFO);
                     appObject.filePath = media.getString(KEY_ARG_MESSAGE_MEDIA_URL);
-                    wxMediaMessage.mediaObject = appObject;
+                    mediaObject = appObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_EMOTION:
                     WXEmojiObject emoObject = new WXEmojiObject();
                     emoObject.emojiPath = media.getString(KEY_ARG_MESSAGE_MEDIA_EMOTION);
-                    wxMediaMessage.mediaObject = emoObject;
+                    mediaObject = emoObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_FILE:
                     WXFileObject fileObject = new WXFileObject();
                     fileObject.filePath = media.getString(KEY_ARG_MESSAGE_MEDIA_FILE);
-                    wxMediaMessage.mediaObject = fileObject;
+                    mediaObject = fileObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_IMAGE:
@@ -364,13 +364,13 @@ public class Wechat extends CordovaPlugin {
                     WXMusicObject musicObject = new WXMusicObject();
                     musicObject.musicUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_MUSICURL);
                     musicObject.musicDataUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_MUSICDATAURL);
-                    wxMediaMessage.mediaObject = musicObject;
+                    mediaObject = musicObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_VIDEO:
                     WXVideoObject videoObject = new WXVideoObject();
                     videoObject.videoUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_VIDEOURL);
-                    wxMediaMessage.mediaObject = videoObject;
+                    mediaObject = videoObject;
                     break;
 
                 case TYPE_WECHAT_SHARING_WEBPAGE:
