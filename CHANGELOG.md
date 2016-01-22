@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.2 - 2016-01-22
+### Fixed
+- Fixed sharing emotion issue (remote file) in Android
+
 ## 1.1.1 - 2016-01-18
 ### Fixed
 - Fixed sharing emotion issue in Android

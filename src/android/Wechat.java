@@ -344,7 +344,14 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WECHAT_SHARING_EMOTION:
                     WXEmojiObject emoObject = new WXEmojiObject();
-                    emoObject.emojiPath = media.getString(KEY_ARG_MESSAGE_MEDIA_EMOTION);
+                    InputStream emoji = getFileInputStream(media.getString(KEY_ARG_MESSAGE_MEDIA_EMOTION));
+                    if (emoji != null) {
+                        try {
+                            emoObject.emojiData = Util.readBytes(emoji);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     mediaObject = emoObject;
                     break;
 
@@ -411,50 +418,10 @@ public class Wechat extends CordovaPlugin {
 
             url = message.getString(key);
 
-            InputStream inputStream = null;
-
-            if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
-
-                File image = Util.downloadAndCacheFile(webView.getContext(), url);
-
-                if (image == null) {
-                    Log.d(TAG, String.format("Bitmap from %s is null.", url));
-                    return null;
-                }
-
-                url = image.getAbsolutePath();
-                inputStream = new FileInputStream(image);
-
-                Log.d(TAG, String.format("Bitmap was downloaded and cached to %s.", url));
-
-
-            } else if (url.startsWith("data:image")) {  // base64 image
-
-                String imageDataBytes = url.substring(url.indexOf(",") + 1);
-                byte imageBytes[] = Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT);
-                inputStream = new ByteArrayInputStream(imageBytes);
-
-                Log.d(TAG, "Image is in base64 format.");
-
-            } else if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) { // external path
-
-                url = Environment.getExternalStorageDirectory().getAbsolutePath() + url.substring(EXTERNAL_STORAGE_IMAGE_PREFIX.length());
-                inputStream = new FileInputStream(url);
-
-                Log.d(TAG, String.format("Bitmap is located on external storage at %s.", url));
-
-            } else if (!url.startsWith("/")) { // relative path
-
-                inputStream = cordova.getActivity().getApplicationContext().getAssets().open(url);
-
-                Log.d(TAG, String.format("Bitmap is located in assets folder at %s.", url));
-
-            } else {
-
-                inputStream = new FileInputStream(url);
-
-                Log.d(TAG, String.format("Bitmap is located at %s.", url));
-
+            // get input stream
+            InputStream inputStream = getFileInputStream(url);
+            if (inputStream == null) {
+                return null;
             }
 
             // decode it
@@ -485,10 +452,9 @@ public class Wechat extends CordovaPlugin {
                 bmp = scaled;
             }
 
+            inputStream.close();
+
         } catch (JSONException e) {
-            bmp = null;
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
             bmp = null;
             e.printStackTrace();
         } catch (IOException e) {
@@ -497,6 +463,71 @@ public class Wechat extends CordovaPlugin {
         }
 
         return bmp;
+    }
+
+    /**
+     * Get input stream from a url
+     *
+     * @param url
+     * @return
+     */
+    protected InputStream getFileInputStream(String url) {
+        try {
+
+            InputStream inputStream = null;
+
+            if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
+
+                File file = Util.downloadAndCacheFile(webView.getContext(), url);
+
+                if (file == null) {
+                    Log.d(TAG, String.format("File could not be downloaded from %s.", url));
+                    return null;
+                }
+
+                url = file.getAbsolutePath();
+                inputStream = new FileInputStream(file);
+
+                Log.d(TAG, String.format("File was downloaded and cached to %s.", url));
+
+            } else if (url.startsWith("data:image")) {  // base64 image
+
+                String imageDataBytes = url.substring(url.indexOf(",") + 1);
+                byte imageBytes[] = Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT);
+                inputStream = new ByteArrayInputStream(imageBytes);
+
+                Log.d(TAG, "Image is in base64 format.");
+
+            } else if (url.startsWith(EXTERNAL_STORAGE_IMAGE_PREFIX)) { // external path
+
+                url = Environment.getExternalStorageDirectory().getAbsolutePath() + url.substring(EXTERNAL_STORAGE_IMAGE_PREFIX.length());
+                inputStream = new FileInputStream(url);
+
+                Log.d(TAG, String.format("File is located on external storage at %s.", url));
+
+            } else if (!url.startsWith("/")) { // relative path
+
+                inputStream = cordova.getActivity().getApplicationContext().getAssets().open(url);
+
+                Log.d(TAG, String.format("File is located in assets folder at %s.", url));
+
+            } else {
+
+                inputStream = new FileInputStream(url);
+
+                Log.d(TAG, String.format("File is located at %s.", url));
+
+            }
+
+            return inputStream;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     protected String getAppId() {
