@@ -13,10 +13,13 @@ module.exports = function (context) {
         // fallback
         ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser');
     }
-    
+
     var config      = new ConfigParser(path.join(context.opts.projectRoot, "config.xml")),
         packageName = config.android_packageName() || config.packageName();
 
+    // replace dash (-) with underscore (_)
+    packageName = packageName.replace(/-/g , "_");
+    
     console.info("Running android-install.Hook: " + context.hook + ", Package: " + packageName + ", Path: " + projectRoot + ".");
 
     if (!packageName) {
