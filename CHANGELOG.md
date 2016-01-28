@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.3 - 2016-01-28
+### Fixed
+- Fixed package name with hyphen issue in android
+
 ## 1.1.2 - 2016-01-22
 ### Fixed
 - Fixed sharing emotion issue (remote file) in Android
