@@ -31,8 +31,9 @@ Wechat.isInstalled(function (installed) {
 
 ## Authenticate using Wechat
 ```Javascript
-var scope = "snsapi_userinfo";
-Wechat.auth(scope, function (response) {
+var scope = "snsapi_userinfo",
+    state = "_" + (+new Date());
+Wechat.auth(scope, state, function (response) {
     // you may use response.code to get the access token.
     alert(JSON.stringify(response));
 }, function (reason) {
