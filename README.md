@@ -79,7 +79,7 @@ Wechat.share({
     message: {
         ...
         media: {
-            type: Wechat.Type.LINK,
+            type: Wechat.Type.WEBPAGE,
             webpageUrl: "http://tech.qq.com/zt2012/tmtdecode/252.htm"
         }
     },
