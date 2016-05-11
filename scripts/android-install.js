@@ -4,7 +4,13 @@ module.exports = function (context) {
     var path        = context.requireCordovaModule('path'),
         fs          = context.requireCordovaModule('fs'),
         shell       = context.requireCordovaModule('shelljs'),
-        projectRoot = context.opts.projectRoot;
+        projectRoot = context.opts.projectRoot,
+        plugins     = context.opts.plugins || [];
+
+    // relates to me?
+    if (plugins.indexOf('cordova-plugin-wechat') === -1) {
+        return ;
+    }
 
     var ConfigParser = null;
     try {

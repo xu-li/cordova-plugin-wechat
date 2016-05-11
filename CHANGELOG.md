@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.4 - 2016-05-11
+### Fixed
+- wxapi directory gets deleted after removing other plugins
+
 ## 1.1.3 - 2016-01-28
 ### Fixed
 - Fixed package name with hyphen issue in android
