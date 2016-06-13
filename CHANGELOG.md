@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.5 - 2016-06-13
+### Fixed
+- fix android src files not being copied during platform add hook
+
 ## 1.1.4 - 2016-05-11
 ### Fixed
 - wxapi directory gets deleted after removing other plugins

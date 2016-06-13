@@ -7,8 +7,8 @@ module.exports = function (context) {
         projectRoot = context.opts.projectRoot,
         plugins     = context.opts.plugins || [];
 
-    // relates to me?
-    if (plugins.indexOf('cordova-plugin-wechat') === -1) {
+    // The plugins array will be empty during platform add
+    if (plugins.length > 0 && plugins.indexOf('cordova-plugin-wechat') === -1) {
         return ;
     }
 
@@ -42,7 +42,7 @@ module.exports = function (context) {
     var targetDir  = path.join(projectRoot, "platforms", "android", "src", packageName.replace(/\./g, path.sep), "wxapi");
         targetFiles = ["EntryActivity.java", "WXEntryActivity.java", "WXPayEntryActivity.java"];
 
-    if (['after_plugin_add', 'after_plugin_install', 'after_platform_add'].indexOf(context.hook) === -1) {
+    if (['after_plugin_add', 'after_plugin_install'].indexOf(context.hook) === -1) {
         // remove it?
         targetFiles.forEach(function (f) {
             try {
