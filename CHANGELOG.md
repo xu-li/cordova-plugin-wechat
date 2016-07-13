@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.2.0 - 2016-07-13
+### Added
+- iOS openSDK1.7.2
+
+### Changed
+- Allow wechat auth on the device without wechat installed.
+
+### Removed
+- WeChatSDK_1.5
+
 ## 1.1.5 - 2016-06-13
 ### Fixed
 - fix android src files not being copied during platform add hook

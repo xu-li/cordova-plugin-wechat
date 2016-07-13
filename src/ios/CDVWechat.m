@@ -15,10 +15,12 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 #pragma mark "API"
 - (void)pluginInitialize {
     NSString* appId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
-    if(appId){
+    if (appId){
         self.wechatAppId = appId;
         [WXApi registerApp: appId];
-    }   
+    }
+    
+    NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
 }
 
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
@@ -92,6 +94,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 
 - (void)sendAuthRequest:(CDVInvokedUrlCommand *)command
 {
+    
     SendAuthReq* req =[[SendAuthReq alloc] init];
     
     // scope
@@ -110,7 +113,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         req.state = [command.arguments objectAtIndex:1];
     }
     
-    if ([WXApi sendReq:req])
+    if ([WXApi sendAuthReq:req viewController:self.viewController delegate:self])
     {
         // save the callback id
         self.currentCallbackId = command.callbackId;
@@ -158,7 +161,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     req.nonceStr = [params objectForKey:requiredParams[3]];
     req.package = @"Sign=WXPay";
     req.sign = [params objectForKey:requiredParams[4]];
-
+    
     if ([WXApi sendReq:req])
     {
         // save the callback id
@@ -211,7 +214,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         case WXErrCodeUnsupport:
             message = @"微信不支持";
             break;
-
+            
         default:
             message = @"未知错误";
     }
