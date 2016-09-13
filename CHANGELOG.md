@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.3.0 - 2016-09-13
+### Added
+- iOS openSDK1.7.3
+
 ## 1.2.0 - 2016-07-13
 ### Added
 - iOS openSDK1.7.2
