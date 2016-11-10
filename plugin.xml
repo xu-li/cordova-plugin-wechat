@@ -68,9 +68,9 @@
         <source-file src="src/ios/CDVWechat.m" />
 
         <!-- Wechat Official -->
-        <header-file src="src/ios/libs/openSDK1.7.3/WXApi.h" />
-        <header-file src="src/ios/libs/openSDK1.7.3/WXApiObject.h" />
-        <source-file src="src/ios/libs/openSDK1.7.3/libWeChatSDK.a" framework="true" />
+        <header-file src="src/ios/libs/OpenSDK1.7.4/WXApi.h" />
+        <header-file src="src/ios/libs/OpenSDK1.7.4/WXApiObject.h" />
+        <source-file src="src/ios/libs/OpenSDK1.7.4/libWeChatSDK.a" framework="true" />
 
         <!-- Other required frameworks -->
         <framework src="libz.tbd" />
@@ -78,6 +78,7 @@
         <framework src="CoreTelephony.framework" />
         <framework src="SystemConfiguration.framework" />
         <framework src="Security.framework" />
+        <framework src="CFNetwork.framework" />
         <framework src="libstdc++.6.tbd" />
     </platform>
 
