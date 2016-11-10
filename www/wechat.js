@@ -95,5 +95,51 @@ module.exports = {
      */
     sendPaymentRequest: function (params, onSuccess, onError) {
         exec(onSuccess, onError, "Wechat", "sendPaymentRequest", [params]);
+    },
+
+    /**
+     * jumpToBizProfile （跳转到某个微信公众号）2016-11-11 测试是失效的，囧
+     *
+     * @link https://segmentfault.com/a/1190000007204624
+     * @link https://segmentfault.com/q/1010000003907796
+     * @example
+     * <code>
+     * var params = {
+     *     info: 'gh_xxxxxxx', // 公众帐号原始ID
+     *     type:  'Normal' // 普通号
+     * }
+     * or 
+     * var params = {
+     *     info: 'extMsg', // 相关的硬件二维码串
+     *     type:  'Device' // 硬件号
+     * };
+     * Wechat.jumpToBizProfile(params, function () {
+     *     alert("Success");
+     * }, function (reason) {
+     *     alert("Failed: " + reason);
+     * });
+     * </code>
+     */
+
+    jumpToBizProfile: function (params, onSuccess, onError) {
+        exec(onSuccess, onError, "Wechat", "jumpToBizProfile", [params]);
+    },
+
+    /**
+     * jumpToWechat （因为jumpToBizProfile失效了，暂时新增了一个临时的api)
+     *
+     * @link https://segmentfault.com/a/1190000007204624
+     * @example
+     * <code>
+     * var url = "wechat://" 现阶段貌似只支持这一个协议了
+     * Wechat.jumpToWechat(url, function () {
+     *     alert("Success");
+     * }, function (reason) {
+     *     alert("Failed: " + reason);
+     * });
+     * </code>
+     */
+    jumpToWechat: function (url, onSuccess, onError) {
+        exec(onSuccess, onError, "Wechat", "jumpToWechat", [url]);
     }
 };
