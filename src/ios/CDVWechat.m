@@ -173,6 +173,71 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     }
 }
 
+- (void)jumpToBizProfile:(CDVInvokedUrlCommand *)command
+{
+    // check arguments
+    NSDictionary *params = [command.arguments objectAtIndex:0];
+    if (!params)
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"参数格式错误"];
+        return ;
+    }
+    
+    // check required parameters
+    NSArray *requiredParams;
+    requiredParams = @[@"type", @"info"];
+    
+    for (NSString *key in requiredParams)
+    {
+        if (![params objectForKey:key])
+        {
+            [self failWithCallbackID:command.callbackId withMessage:@"参数格式错误"];
+            return ;
+        }
+    }
+    JumpToBizProfileReq *req = [JumpToBizProfileReq new];
+    NSString *bizType =  [params objectForKey:requiredParams[0]];
+
+    if ([bizType isEqualToString:@"Normal"]) {
+        req.profileType = WXBizProfileType_Normal;
+        req.username = [params objectForKey:requiredParams[1]];
+    } else {
+        req.profileType = WXBizProfileType_Device;
+        req.extMsg = [params objectForKey:requiredParams[1]];
+    }
+    
+    if ([WXApi sendReq:req])
+    {
+        // save the callback id
+        self.currentCallbackId = command.callbackId;
+    }
+    else
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"发送请求失败"];
+    }
+}
+
+- (void)jumpToWechat:(CDVInvokedUrlCommand *)command
+{
+    // check arguments
+    NSString *url = [command.arguments objectAtIndex:0];
+    if (!url || ![url hasPrefix:@"weixin://"])
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"参数格式错误"];
+        return ;
+    }
+    
+    NSURL *formatUrl = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    if ([[UIApplication sharedApplication] canOpenURL:formatUrl]) {
+        [[UIApplication sharedApplication] openURL:formatUrl];
+    } else{
+        [self failWithCallbackID:command.callbackId withMessage:@"未安装微信或其他错误"];
+    }
+    return ;
+}
+
+
+
 #pragma mark "WXApiDelegate"
 
 /**
