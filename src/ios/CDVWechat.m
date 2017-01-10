@@ -363,6 +363,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         case CDVWXSharingTypeFile:
             mediaObject = [WXFileObject object];
             ((WXFileObject*)mediaObject).fileData = [self getNSDataFromURL:[media objectForKey:@"file"]];
+            ((WXFileObject*)mediaObject).fileExtension = [media objectForKey:@"fileExtension"];
             break;
             
         case CDVWXSharingTypeImage:
