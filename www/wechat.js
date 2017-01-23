@@ -73,6 +73,14 @@ module.exports = {
         return exec(onSuccess, onError, "Wechat", "sendAuthRequest", [scope, state]);
     },
 
+    get_token: function (code, onSuccess, onError) {
+        return exec(onSuccess, onError, "Wechat", "getAuthToken", [code]);
+    },
+
+    get_user_info: function (token, onSuccess, onError) {
+        return exec(onSuccess, onError, "Wechat", "getUserInfo", [token]);
+    },
+
     /**
      * Send a payment request
      *

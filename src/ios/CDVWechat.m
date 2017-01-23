@@ -19,8 +19,14 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         self.wechatAppId = appId;
         [WXApi registerApp: appId];
     }
+
+    NSString* appSecret = [[self.commandDelegate settings] objectForKey:@"wechatappsecret"];
     
-    NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
+    if (appSecret){
+        self.wechatAppSecret = appSecret;
+    }
+    
+    NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@. Sec: %@.", [WXApi getApiVersion], appId, appSecret);
 }
 
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
@@ -122,6 +128,89 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     {
         [self failWithCallbackID:command.callbackId withMessage:@"发送请求失败"];
     }
+}
+
+- (void)getUserInformation:(CDVInvokedUrlCommand *)command
+{
+    NSString *auth_code;
+    
+    // auth code
+    if ([command.arguments count] > 0)
+    {
+        auth_code = [command.arguments objectAtIndex:0];
+    }
+    else
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"缺少从auth获取的code参数"];
+        return;
+    }
+    
+    // get auth token
+    NSString *tokenUrl = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code", self.wechatAppId, self.wechatAppSecret, auth_code];
+    
+    NSData *tokenData = [self sendRawRequest:tokenUrl];
+    
+    if (tokenData == nil) {
+        [self failWithCallbackID:command.callbackId withMessage:@"获取的token请求失败"];
+        return;
+    }
+    
+    NSLog(@"token response:%@",[NSString stringWithUTF8String:[tokenData bytes]]);
+    
+    id tokenJson = [NSJSONSerialization JSONObjectWithData:tokenData options:0 error:nil];
+    NSString *accessToken = [tokenJson valueForKey:@"access_token"];
+    double expireSeconds = [[tokenData valueForKey:@"expires_in"] doubleValue];
+    NSString *refreshToken = [tokenJson valueForKey:@"refresh_token"];
+    NSString *openID = [tokenJson valueForKey:@"openid"]; //授权用户唯一标识
+    NSString *scope = [tokenJson valueForKey:@"scope"];
+    NSString *unionId = [tokenJson valueForKey:@"unionid"];
+    
+    if (accessToken == nil || openID == nil) {
+        [self failWithCallbackID:command.callbackId withMessage:@"获取的token失败"];
+    }
+    
+    NSString *userInfoUrl = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/userinfo?access_token=%@&openid=%@", accessToken, openID];
+    NSData *userInfoData = [self sendRawRequest:userInfoUrl];
+    
+    if (userInfoData == nil) {
+        [self failWithCallbackID:command.callbackId withMessage:@"获取用户信息请求失败"];
+        return;
+    }
+
+    NSLog(@"user info response:%@",[NSString stringWithUTF8String:[userInfoData bytes]]);
+    
+    id userInfoJson = [NSJSONSerialization JSONObjectWithData:userInfoData options:0 error:nil];
+    NSString *newOpenID = [userInfoJson valueForKey:@"openid"];
+    NSString *nickName = [userInfoJson valueForKey:@"nickname"];
+    int sex = [[userInfoJson valueForKey:@"sex"] intValue]; //1 male, 2 female
+    NSString *province = [userInfoJson valueForKey:@"province"];
+    NSString *city = [userInfoJson valueForKey:@"city"];
+    NSString *country = [userInfoJson valueForKey:@"country"];
+    NSString *headImgUrl = [userInfoJson valueForKey:@"headimgurl"];
+    NSString *newUnionId = [userInfoJson valueForKey:@"unionid"];
+    
+    if (nickName == nil) {
+        [self failWithCallbackID:command.callbackId withMessage:@"获取用户信息失败"];
+        return;
+    }
+
+    NSDictionary *response = @{
+                 @"access_token": accessToken != nil ? accessToken : @"",
+                 @"expire_seconds": [NSString stringWithFormat:@"%f", expireSeconds],
+                 @"refresh_token": refreshToken != nil ? refreshToken : @"",
+                 @"open_id": openID != nil ? openID : @"",
+                 @"union_id": unionId != nil ? unionId : @"",
+                 @"nick_name": nickName != nil ? nickName : @"",
+                 @"sex": sex == 1 ? @"Male" : @"Female",
+                 @"city": city != nil ? city : @"",
+                 @"province": province != nil ? province : @"",
+                 @"country": country != nil ? country : @"",
+                 @"head_img_url": headImgUrl != nil ? headImgUrl : @"",
+                 };
+    
+    CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
+    
+    [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
 }
 
 - (void)sendPaymentRequest:(CDVInvokedUrlCommand *)command
@@ -475,6 +564,20 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 {
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
     [self.commandDelegate sendPluginResult:commandResult callbackId:callbackID];
+}
+
+- (NSData*)sendRawRequest:(NSString*)url
+{
+    // 初始化请求
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    // 设置URL
+    [request setURL:[NSURL URLWithString:url]];
+    // 设置HTTP方法
+    [request setHTTPMethod:@"GET"];
+    // 发 送同步请求, 这里得returnData就是返回得数据了
+    NSData *returnData = [NSURLConnection sendSynchronousRequest:request   
+                                               returningResponse:nil error:nil];
+    return returnData;
 }
 
 @end

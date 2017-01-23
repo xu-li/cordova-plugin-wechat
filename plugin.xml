@@ -33,6 +33,7 @@
                 <param name="onload" value="true" />
             </feature>
             <preference name="WECHATAPPID" value="$WECHATAPPID"/>
+            <preference name="WECHATAPPSECRET" value="$WECHATAPPSECRET"/>
         </config-file>
 
         <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
@@ -94,6 +95,7 @@
                 <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
             </feature>
             <preference name="WECHATAPPID" value="$WECHATAPPID"/>
+            <preference name="WECHATAPPSECRET" value="$WECHATAPPSECRET"/>
         </config-file>
         
         <config-file target="AndroidManifest.xml" parent="/*">
