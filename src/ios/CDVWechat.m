@@ -130,7 +130,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     }
 }
 
-- (void)getUserInformation:(CDVInvokedUrlCommand *)command
+- (void)getUserInfo:(CDVInvokedUrlCommand *)command
 {
     NSString *auth_code;
     
@@ -157,9 +157,11 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     
     NSLog(@"token response:%@",[NSString stringWithUTF8String:[tokenData bytes]]);
     
-    id tokenJson = [NSJSONSerialization JSONObjectWithData:tokenData options:0 error:nil];
+    NSDictionary * tokenJson = (NSDictionary*)[NSJSONSerialization JSONObjectWithData:tokenData options:0 error:nil];
     NSString *accessToken = [tokenJson valueForKey:@"access_token"];
-    double expireSeconds = [[tokenData valueForKey:@"expires_in"] doubleValue];
+    NSLog(@"Access Token: %@", accessToken);
+    double expireSeconds = [[tokenJson objectForKey:@"expires_in"] doubleValue];
+    NSLog(@"Expires In: %.2f seconds", expireSeconds);
     NSString *refreshToken = [tokenJson valueForKey:@"refresh_token"];
     NSString *openID = [tokenJson valueForKey:@"openid"]; //授权用户唯一标识
     NSString *scope = [tokenJson valueForKey:@"scope"];

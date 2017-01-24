@@ -24,12 +24,12 @@ enum  CDVWechatSharingType {
 
 @property (nonatomic, copy) NSString *currentCallbackId;
 @property (nonatomic, copy) NSString *wechatAppId;
-@property (nonatomic, copy)   NSString *wechatAppSecret;
+@property (nonatomic, copy) NSString *wechatAppSecret;
 
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command;
 - (void)share:(CDVInvokedUrlCommand *)command;
 - (void)sendAuthRequest:(CDVInvokedUrlCommand *)command;
-- (void)getUserInformation:(CDVInvokedUrlCommand *)command;
+- (void)getUserInfo:(CDVInvokedUrlCommand *)command;
 - (void)sendPaymentRequest:(CDVInvokedUrlCommand *)command;
 - (void)jumpToBizProfile:(CDVInvokedUrlCommand *)command;
 - (void)jumpToWechat:(CDVInvokedUrlCommand *)command;

@@ -41,6 +41,32 @@ Wechat.auth(scope, state, function (response) {
 });
 ```
 
+## Get user information after authenticated
+```Javascript
+// retrieve the auth code from last response
+var auth_code = response["code"];
+Wechat.getUserInfo(auth_code, function (response) {
+    /*
+    {
+      "nick_name":"无天",
+      "union_id":"User union id",
+      "city":"Chengdu",
+      "province":"Sichuan",
+      "country":"CN",
+      "refresh_token":"The refresh token",
+      "head_img_url":"http://wx.qlogo.cn/mmopen/Q3auHgzwzM4ItTw1Ko15RM0s7VL8Wo0LvJia7Bse9dZ3pH54icF3MEeO4KibzWib92hicSP1mqp1RicmVibmm9hKTPIrA/0",
+      "open_id":"User open id, uniq for user",
+      "access_token":"The access token",
+      "expire_seconds":"7200.000000",
+      "sex":"Male"
+    }
+    */
+    alert(JSON.stringify(response));
+}, function (reason) {
+    alert("Failed: " + reason);
+});
+```
+
 ## Share text
 ```Javascript
 Wechat.share({
