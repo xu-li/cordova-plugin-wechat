@@ -106,16 +106,6 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity
-                android:name=".wxapi.WXEntryActivity"
-                android:label="@string/launcher_name"
-                android:exported="true">
-                <intent-filter>
-                    <action android:name="android.intent.action.VIEW"/>
-                    <category android:name="android.intent.category.DEFAULT"/>
-                    <data android:scheme="$WECHATAPPID"/>
-                </intent-filter>
-            </activity>
-            <activity
                 android:name=".wxapi.WXPayEntryActivity"
                 android:label="@string/launcher_name"
                 android:exported="true"
