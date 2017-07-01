@@ -1,5 +1,7 @@
 package xu.li.cordova.wechat;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -7,20 +9,20 @@ import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.modelmsg.WXAppExtendObject;
-import com.tencent.mm.sdk.modelmsg.WXEmojiObject;
-import com.tencent.mm.sdk.modelmsg.WXFileObject;
-import com.tencent.mm.sdk.modelmsg.WXImageObject;
-import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.sdk.modelmsg.WXMusicObject;
-import com.tencent.mm.sdk.modelmsg.WXTextObject;
-import com.tencent.mm.sdk.modelmsg.WXVideoObject;
-import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.sdk.modelpay.PayReq;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXAppExtendObject;
+import com.tencent.mm.opensdk.modelmsg.WXEmojiObject;
+import com.tencent.mm.opensdk.modelmsg.WXFileObject;
+import com.tencent.mm.opensdk.modelmsg.WXImageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
+import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
@@ -40,6 +42,7 @@ public class Wechat extends CordovaPlugin {
 
     public static final String TAG = "Cordova.Plugin.Wechat";
 
+    public static final String PREFS_NAME = "Cordova.Plugin.Wechat";
     public static final String WXAPPID_PROPERTY_KEY = "wechatappid";
 
     public static final String ERROR_WECHAT_NOT_INSTALLED = "未安装微信";
@@ -88,10 +91,9 @@ public class Wechat extends CordovaPlugin {
 
     public static final int MAX_THUMBNAIL_SIZE = 320;
 
-    public static Wechat instance = null;
+    protected static CallbackContext currentCallbackContext;
+    protected static IWXAPI wxAPI;
 
-    protected CallbackContext currentCallbackContext;
-    protected IWXAPI wxAPI;
     protected String appId;
 
     @Override
@@ -99,28 +101,40 @@ public class Wechat extends CordovaPlugin {
 
         super.pluginInitialize();
 
-        instance = this;
+        String id = getAppId();
 
+        // save app id
+        saveAppId(cordova.getActivity(), id);
+
+        // init api
         initWXAPI();
 
         Log.d(TAG, "plugin initialized.");
     }
 
     protected void initWXAPI() {
-        if (wxAPI == null) {
-            String appId = getAppId();
+        IWXAPI api = getWxAPI(cordova.getActivity());
 
-            wxAPI = WXAPIFactory.createWXAPI(webView.getContext(), appId, true);
-            wxAPI.registerApp(appId);
+        if (api != null) {
+            api.registerApp(getAppId());
         }
     }
 
-    public IWXAPI getWxAPI() {
-        return wxAPI;
-    }
+    /**
+     * Get weixin api
+     * @param ctx
+     * @return
+     */
+    public static IWXAPI getWxAPI(Context ctx) {
+        if (wxAPI == null) {
+            String appId = getSavedAppId(ctx);
 
-    public CallbackContext getCurrentCallbackContext() {
-        return currentCallbackContext;
+            if (!appId.isEmpty()) {
+                wxAPI = WXAPIFactory.createWXAPI(ctx, appId, true);
+            }
+        }
+
+        return wxAPI;
     }
 
     @Override
@@ -142,7 +156,7 @@ public class Wechat extends CordovaPlugin {
 
     protected boolean share(CordovaArgs args, final CallbackContext callbackContext)
             throws JSONException {
-        final IWXAPI api = getWXAPI();
+        final IWXAPI api = getWxAPI(cordova.getActivity());
 
         // check if installed
         if (!api.isWXAppInstalled()) {
@@ -218,7 +232,7 @@ public class Wechat extends CordovaPlugin {
     }
 
     protected boolean sendAuthRequest(CordovaArgs args, CallbackContext callbackContext) {
-        final IWXAPI api = getWXAPI();
+        final IWXAPI api = getWxAPI(cordova.getActivity());
 
         final SendAuth.Req req = new SendAuth.Req();
         try {
@@ -248,7 +262,7 @@ public class Wechat extends CordovaPlugin {
 
     protected boolean sendPaymentRequest(CordovaArgs args, CallbackContext callbackContext) {
 
-        final IWXAPI api = getWXAPI();
+        final IWXAPI api = getWxAPI(cordova.getActivity());
 
         // check if # of arguments is correct
         final JSONObject params;
@@ -292,7 +306,7 @@ public class Wechat extends CordovaPlugin {
     }
 
     protected boolean isInstalled(CallbackContext callbackContext) {
-        final IWXAPI api = getWXAPI();
+        final IWXAPI api = getWxAPI(cordova.getActivity());
 
         if (!api.isWXAppInstalled()) {
             callbackContext.success(0);
@@ -389,10 +403,6 @@ public class Wechat extends CordovaPlugin {
         wxMediaMessage.mediaObject = mediaObject;
 
         return wxMediaMessage;
-    }
-
-    protected IWXAPI getWXAPI() {
-        return wxAPI;
     }
 
     private String buildTransaction() {
@@ -530,12 +540,42 @@ public class Wechat extends CordovaPlugin {
         return null;
     }
 
-    protected String getAppId() {
+    public String getAppId() {
         if (this.appId == null) {
             this.appId = preferences.getString(WXAPPID_PROPERTY_KEY, "");
         }
 
         return this.appId;
+    }
+
+    /**
+     * Get saved app id
+     * @param ctx
+     * @return
+     */
+    public static String getSavedAppId(Context ctx) {
+        SharedPreferences settings = ctx.getSharedPreferences(PREFS_NAME, 0);
+        return settings.getString(WXAPPID_PROPERTY_KEY, "");
+    }
+
+    /**
+     * Save app id into SharedPreferences
+     * @param ctx
+     * @param id
+     */
+    public static void saveAppId(Context ctx, String id) {
+        if (id.isEmpty()) {
+            return ;
+        }
+
+        SharedPreferences settings = ctx.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(WXAPPID_PROPERTY_KEY, id);
+        editor.commit();
+    }
+
+    public static CallbackContext getCurrentCallbackContext() {
+        return currentCallbackContext;
     }
 
     private void sendNoResultPluginResult(CallbackContext callbackContext) {

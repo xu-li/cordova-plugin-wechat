@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-wechat"
-    version="1.4.0">
+    version="2.0.0">
 
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
@@ -16,10 +16,7 @@
     <!-- add this to your config.xml -->
     <!-- <preference name="WECHATAPPID" value="YOUR_WECHAT_APP_ID_HERE" /> -->
     <preference name="WECHATAPPID" />
-    <!--require cordova version -->
-    <engines>
-        <engine name="cordova" version=">=3.5.0" />
-    </engines>
+
     <!-- js module-->
     <js-module src="www/wechat.js" name="Wechat">
         <clobbers target="Wechat" />
@@ -130,6 +127,6 @@
 
         <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
         <source-file src="src/android/Util.java" target-dir="src/xu/li/cordova/wechat" />
-        <source-file src="src/android/libammsdk.jar" target-dir="libs" />
+        <framework src="android-build.gradle" custom="true" type="gradleReference" />
     </platform>
 </plugin>
