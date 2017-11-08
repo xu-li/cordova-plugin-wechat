@@ -11,10 +11,13 @@ import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
 
 import org.apache.cordova.CallbackContext;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import xu.li.cordova.wechat.Wechat;
 
@@ -68,7 +71,9 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
                     case ConstantsAPI.COMMAND_SENDAUTH:
                         auth(resp);
                         break;
-
+                    case ConstantsAPI.COMMAND_CHOOSE_CARD_FROM_EX_CARD_PACKAGE:
+                        plunckInvoiceData(resp);
+                        break;
                     case ConstantsAPI.COMMAND_PAY_BY_WX:
                     default:
                         ctx.success();
@@ -134,4 +139,20 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
 
         ctx.success(response);
     }
+
+    protected void plunckInvoiceData(BaseResp resp) {
+
+            CallbackContext ctx = Wechat.getCurrentCallbackContext();
+            ChooseCardFromWXCardPackage.Resp resp1 = (ChooseCardFromWXCardPackage.Resp) resp;
+            JSONObject response = new JSONObject();
+
+            try {
+                JSONArray resp2 = new JSONArray(resp1.cardItemList);
+                response.put("data", resp2);
+            } catch (JSONException e) {
+                Log.e(Wechat.TAG, e.getMessage());
+            }
+
+            ctx.success(response);
+        }
 }

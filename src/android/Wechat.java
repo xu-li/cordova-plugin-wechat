@@ -309,50 +309,50 @@ public class Wechat extends CordovaPlugin {
         return true;
     }
 
-    protected boolean chooseInvoiceFromWX(CordovaArgs args, CallbackContext callbackContext) {
+   protected boolean chooseInvoiceFromWX(CordovaArgs args, CallbackContext callbackContext) {
 
-            final IWXAPI api = getWxAPI(cordova.getActivity());
+               final IWXAPI api = getWxAPI(cordova.getActivity());
 
-            // check if # of arguments is correct
-            final JSONObject params;
-            try {
-                params = args.getJSONObject(0);
-            } catch (JSONException e) {
-                callbackContext.error(ERROR_INVALID_PARAMETERS);
-                return true;
-            }
+               // check if # of arguments is correct
+               final JSONObject params;
+               try {
+                   params = args.getJSONObject(0);
+               } catch (JSONException e) {
+                   callbackContext.error(ERROR_INVALID_PARAMETERS);
+                   return true;
+               }
 
-            ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
+               ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
 
-            try {
-                req.appId = getAppId();
-                req.canMultiSelect = "true";
-                req.cardType = "INVOICE";
-                req.signType = params.getString("signType");
-                req.cardSign = params.getString("cardSign");
-                req.nonceStr = params.getString("nonceStr");
-                req.timeStamp = params.getString("timeStamp");
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+               try {
+                   req.appId = getAppId();
+                   req.cardType = "INVOICE";
+                   req.signType = params.getString("signType");
+                   req.cardSign = params.getString("cardSign");
+                   req.nonceStr = params.getString("nonceStr");
+                   req.timeStamp = params.getString("timeStamp");
+                   req.canMultiSelect = "1";
+               } catch (Exception e) {
+                   Log.e(TAG, e.getMessage());
 
-                callbackContext.error(ERROR_INVALID_PARAMETERS);
-                return true;
-            }
+                   callbackContext.error(ERROR_INVALID_PARAMETERS);
+                   return true;
+               }
 
-            if (api.sendReq(req)) {
-                Log.i(TAG, "Invoice request has been sent successfully.");
+               if (api.sendReq(req)) {
+                   Log.i(TAG, "Invoice request has been sent successfully.");
 
-                // send no result
-                sendNoResultPluginResult(callbackContext);
-            } else {
-                Log.i(TAG, "Invoice request has been sent unsuccessfully.");
+                   // send no result
+                   sendNoResultPluginResult(callbackContext);
+               } else {
+                   Log.i(TAG, "Invoice request has been sent unsuccessfully.");
 
-                // send error
-                callbackContext.error(ERROR_SEND_REQUEST_FAILED);
-            }
+                   // send error
+                   callbackContext.error(ERROR_SEND_REQUEST_FAILED);
+               }
 
-            return true;
-        }
+               return true;
+           }
 
     protected boolean isInstalled(CallbackContext callbackContext) {
         final IWXAPI api = getWxAPI(cordova.getActivity());

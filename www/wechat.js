@@ -108,7 +108,7 @@ module.exports = {
      *     info: 'gh_xxxxxxx', // 公众帐号原始ID
      *     type:  'Normal' // 普通号
      * }
-     * or 
+     * or
      * var params = {
      *     info: 'extMsg', // 相关的硬件二维码串
      *     type:  'Device' // 硬件号
@@ -141,5 +141,23 @@ module.exports = {
      */
     jumpToWechat: function (url, onSuccess, onError) {
         exec(onSuccess, onError, "Wechat", "jumpToWechat", [url]);
+    },
+
+    /**
+     * chooseInvoiceFromWX exq:choose invoices from Wechat card list
+     *
+     * @example
+     * <code>
+     * params: signType, cardSign, nonceStr, timeStamp  all required
+     * Wechat.chooseInvoiceFromWX(params, function () {
+     *     alert("Success");
+     * }, function (reason) {
+     *     alert("Failed: " + reason);
+     * });
+     * </code>
+     */
+    chooseInvoiceFromWX: function (params, onSuccess, onError) {
+        exec(onSuccess, onError, "Wechat", "chooseInvoiceFromWX", [params]);
     }
+
 };
