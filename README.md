@@ -109,6 +109,23 @@ Wechat.sendPaymentRequest(params, function () {
 });
 ```
 
+## Choose invoices from card list
+```Javascript
+／／ offical doc https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1496561749_f7T6D
+var params = {
+    timeStamp: '1510198391', // timeStamp
+    signType: 'SHA1', // sign type
+    cardSign: 'dff450eeeed08120159d285e79737173aec3df94', // cardSign
+    nonceStr: '5598190f-5fb3-4bff-8314-fd189ab4e4b8', // nonce
+};
+
+Wechat.chooseInvoiceFromWX(data,function(data){
+    console.log(data);
+},function(){
+    alert('error');
+})
+```
+
 # FAQ
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
