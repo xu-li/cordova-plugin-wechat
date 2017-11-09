@@ -4,7 +4,7 @@ A cordova plugin, a JS version of Wechat SDK
 
 # Feature
 
-Share title, description, image, and link to wechat moment(朋友圈)
+Share title, description, image, and link to wechat moment(朋友圈)，choose invoice from Wechat list
 
 # Example
 
@@ -107,6 +107,23 @@ Wechat.sendPaymentRequest(params, function () {
 }, function (reason) {
     alert("Failed: " + reason);
 });
+```
+
+## Choose invoices from card list
+```Javascript
+//offical doc https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1496561749_f7T6D
+var params = {
+    timeStamp: '1510198391', // timeStamp
+    signType: 'SHA1', // sign type
+    cardSign: 'dff450eeeed08120159d285e79737173aec3df94', // cardSign
+    nonceStr: '5598190f-5fb3-4bff-8314-fd189ab4e4b8', // nonce
+};
+
+Wechat.chooseInvoiceFromWX(data,function(data){
+    console.log(data);
+},function(){
+    alert('error');
+})
 ```
 
 # FAQ

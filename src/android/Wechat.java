@@ -24,6 +24,8 @@ import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CordovaPlugin;
@@ -149,6 +151,8 @@ public class Wechat extends CordovaPlugin {
             return sendPaymentRequest(args, callbackContext);
         } else if (action.equals("isWXAppInstalled")) {
             return isInstalled(callbackContext);
+        }else if (action.equals("chooseInvoiceFromWX")){
+            return chooseInvoiceFromWX(args, callbackContext);
         }
 
         return false;
@@ -305,6 +309,51 @@ public class Wechat extends CordovaPlugin {
         return true;
     }
 
+   protected boolean chooseInvoiceFromWX(CordovaArgs args, CallbackContext callbackContext) {
+
+               final IWXAPI api = getWxAPI(cordova.getActivity());
+
+               // check if # of arguments is correct
+               final JSONObject params;
+               try {
+                   params = args.getJSONObject(0);
+               } catch (JSONException e) {
+                   callbackContext.error(ERROR_INVALID_PARAMETERS);
+                   return true;
+               }
+
+               ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
+
+               try {
+                   req.appId = getAppId();
+                   req.cardType = "INVOICE";
+                   req.signType = params.getString("signType");
+                   req.cardSign = params.getString("cardSign");
+                   req.nonceStr = params.getString("nonceStr");
+                   req.timeStamp = params.getString("timeStamp");
+                   req.canMultiSelect = "1";
+               } catch (Exception e) {
+                   Log.e(TAG, e.getMessage());
+
+                   callbackContext.error(ERROR_INVALID_PARAMETERS);
+                   return true;
+               }
+
+               if (api.sendReq(req)) {
+                   Log.i(TAG, "Invoice request has been sent successfully.");
+
+                   // send no result
+                   sendNoResultPluginResult(callbackContext);
+               } else {
+                   Log.i(TAG, "Invoice request has been sent unsuccessfully.");
+
+                   // send error
+                   callbackContext.error(ERROR_SEND_REQUEST_FAILED);
+               }
+
+               return true;
+           }
+
     protected boolean isInstalled(CallbackContext callbackContext) {
         final IWXAPI api = getWxAPI(cordova.getActivity());
 
@@ -316,6 +365,7 @@ public class Wechat extends CordovaPlugin {
 
         return true;
     }
+
 
     protected WXMediaMessage buildSharingMessage(JSONObject params)
             throws JSONException {
