@@ -4,7 +4,7 @@ A cordova plugin, a JS version of Wechat SDK
 
 # Feature
 
-Share title, description, image, and link to wechat moment(朋友圈)
+Share title, description, image, and link to wechat moment(朋友圈)，choose invoice from Wechat list
 
 # Example
 
