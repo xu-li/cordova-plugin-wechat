@@ -111,7 +111,7 @@ Wechat.sendPaymentRequest(params, function () {
 
 ## Choose invoices from card list
 ```Javascript
-／／ offical doc https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1496561749_f7T6D
+//offical doc https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1496561749_f7T6D
 var params = {
     timeStamp: '1510198391', // timeStamp
     signType: 'SHA1', // sign type
