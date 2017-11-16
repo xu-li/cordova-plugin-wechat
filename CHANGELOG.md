@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.1.0 - 2017-11-16
+### Added
+- iOS OpenSDK1.8.0
+- Choose invoices from card list
+
 ## 2.0.0 - 2017-07-01
 ### Changed
 - Use android sdk from JCenter
