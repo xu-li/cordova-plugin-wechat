@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import com.rytzhou.maishou.R;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXAppExtendObject;
@@ -23,6 +24,8 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 
 import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
 
@@ -142,8 +145,9 @@ public class Wechat extends CordovaPlugin {
     @Override
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         Log.d(TAG, String.format("%s is called. Callback ID: %s.", action, callbackContext.getCallbackId()));
-
-        if (action.equals("share")) {
+        if (action.equals("shareMini")) {
+            return shareMini(args, callbackContext);
+        } else if (action.equals("share")) {
             return share(args, callbackContext);
         } else if (action.equals("sendAuthRequest")) {
             return sendAuthRequest(args, callbackContext);
@@ -158,6 +162,58 @@ public class Wechat extends CordovaPlugin {
         return false;
     }
 
+    protected boolean shareMini(CordovaArgs args, final CallbackContext callbackContext)
+            throws JSONException {
+        final IWXAPI api = getWxAPI(cordova.getActivity());
+
+        // check if installed
+        if (!api.isWXAppInstalled()) {
+            callbackContext.error(ERROR_WECHAT_NOT_INSTALLED);
+            return true;
+        }
+
+        // check if # of arguments is correct
+        final JSONObject params;
+        try {
+            params = args.getJSONObject(0);
+        } catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+
+        JSONObject j = params.getJSONObject("message");
+        WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+        miniProgramObj.webpageUrl = j.getString("webpageUrl"); // 兼容低版本的网页链接
+        miniProgramObj.userName = j.getString("userName");     // 小程序原始id
+        miniProgramObj.path = j.getString("path");            //小程序页面路径
+        WXMediaMessage msg = new WXMediaMessage(miniProgramObj);
+        msg.title = j.getString("title");                    // 小程序消息title
+        msg.description = j.getString("desc");               // 小程序消息desc
+
+        Bitmap thumbnail = getThumbnail(j, KEY_ARG_MESSAGE_THUMB);
+        if (thumbnail != null) {
+            msg.setThumbImage(thumbnail);
+            thumbnail.recycle();
+        }
+        if (thumbnail == null) {
+            thumbnail = BitmapFactory.decodeResource(cordova.getActivity().getResources(),
+                    R.drawable.alibc_link_title_bar_close);
+            msg.setThumbImage(thumbnail);
+        }
+        final SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = buildTransaction("webpage");
+        req.message = msg;
+        req.scene = SendMessageToWX.Req.WXSceneSession;  // 目前支持会话
+        if (api.sendReq(req)) {
+            Log.i(TAG, "Message has been sent successfully.");
+        } else {
+            Log.i(TAG, "Message has been sent unsuccessfully.");
+            currentCallbackContext = null;
+            callbackContext.error(ERROR_SEND_REQUEST_FAILED);
+        }
+        sendNoResultPluginResult(callbackContext);
+        return true;
+    }
     protected boolean share(CordovaArgs args, final CallbackContext callbackContext)
             throws JSONException {
         final IWXAPI api = getWxAPI(cordova.getActivity());

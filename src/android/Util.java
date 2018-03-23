@@ -66,6 +66,7 @@ public class Util {
             Log.d(Wechat.TAG, String.format("Start downloading file at %s.", url));
 
             HttpURLConnection connection = (HttpURLConnection) fileURL.openConnection();
+            connection.addRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.160 Safari/537.22");
             connection.connect();
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
