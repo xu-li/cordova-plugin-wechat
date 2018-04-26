@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.0 - 2018-04-26
+### Added
+- Share with mini-program (pull request #417 by xingducai)
+- Add sub merchant support (pull request #401 by wxp-mjs)
+
 ## 2.1.0 - 2017-11-16
 ### Added
 - iOS OpenSDK1.8.0
