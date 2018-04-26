@@ -15,12 +15,13 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 #pragma mark "API"
 - (void)pluginInitialize {
     NSString* appId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
-    if (appId){
+
+    if (appId && ![appId isEqualToString:self.wechatAppId]) {
         self.wechatAppId = appId;
         [WXApi registerApp: appId];
+        
+        NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
     }
-
-    NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
 }
 
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
@@ -138,11 +139,11 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     NSArray *requiredParams;
     if ([params objectForKey:@"mch_id"])
     {
-        requiredParams = @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign"];
+        requiredParams = @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign", @"appid"];
     }
     else
     {
-        requiredParams = @[@"partnerid", @"prepayid", @"timestamp", @"noncestr", @"sign"];
+        requiredParams = @[@"partnerid", @"prepayid", @"timestamp", @"noncestr", @"sign", @"appid"];
     }
 
     for (NSString *key in requiredParams)
@@ -155,6 +156,13 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     }
 
     PayReq *req = [[PayReq alloc] init];
+
+    NSString *appId = [params objectForKey:requiredParams[5]];
+    if (appId && ![appId isEqualToString:self.wechatAppId]) {
+        self.wechatAppId = appId;
+        [WXApi registerApp: appId];
+    }
+
     req.partnerId = [params objectForKey:requiredParams[0]];
     req.prepayId = [params objectForKey:requiredParams[1]];
     req.timeStamp = [[params objectForKey:requiredParams[2]] intValue];
@@ -354,6 +362,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         [self failWithCallbackID:self.currentCallbackId withMessage:message];
     }
 
+    [self pluginInitialize];
     self.currentCallbackId = nil;
 }
 
