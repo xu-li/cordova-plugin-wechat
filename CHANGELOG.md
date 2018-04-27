@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.3.0 - 2018-04-27
+### Removed
+- Share with mini-program (See #427, #428)
+
 ## 2.2.0 - 2018-04-26
 ### Added
 - Share with mini-program (pull request #417 by xingducai)
