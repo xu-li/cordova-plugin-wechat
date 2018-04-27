@@ -49,10 +49,6 @@ module.exports = {
         exec(onSuccess, onError, "Wechat", "share", [message]);
     },
 
-    shareMini: function (message, onSuccess, onError) {
-        exec(onSuccess, onError, "Wechat", "shareMini", [message]);
-    },
-
     /**
      * Sending an auth request to Wechat
      *
