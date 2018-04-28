@@ -9,7 +9,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
-import com.rytzhou.maishou.R;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXAppExtendObject;
@@ -196,9 +195,7 @@ public class Wechat extends CordovaPlugin {
             thumbnail.recycle();
         }
         if (thumbnail == null) {
-            thumbnail = BitmapFactory.decodeResource(cordova.getActivity().getResources(),
-                    R.drawable.alibc_link_title_bar_close);
-            msg.setThumbImage(thumbnail);
+            
         }
         final SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction("webpage");
