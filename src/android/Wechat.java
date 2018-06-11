@@ -105,7 +105,7 @@ public class Wechat extends CordovaPlugin {
 
         super.pluginInitialize();
 
-        String id = getAppId();
+        String id = getAppId(preferences);
 
         // save app id
         saveAppId(cordova.getActivity(), id);
@@ -119,10 +119,10 @@ public class Wechat extends CordovaPlugin {
     protected void initWXAPI() {
         IWXAPI api = getWxAPI(cordova.getActivity());
         if(wx_preferences == null) {
-            wx_preferences = this.preferences;
+            wx_preferences = preferences;
         }
         if (api != null) {
-            api.registerApp(getAppId());
+            api.registerApp(getAppId(preferences));
         }
     }
 
@@ -283,7 +283,7 @@ public class Wechat extends CordovaPlugin {
 
         try {
             final String appid = params.getString("appid");
-            final String savedAppid = getAppId();
+            final String savedAppid = getAppId(preferences);
             if (!savedAppid.equals(appid)) {
                 this.saveAppId(cordova.getActivity(), appid);
             }
@@ -335,7 +335,7 @@ public class Wechat extends CordovaPlugin {
                ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
 
                try {
-                   req.appId = getAppId();
+                   req.appId = getAppId(preferences);
                    req.cardType = "INVOICE";
                    req.signType = params.getString("signType");
                    req.cardSign = params.getString("cardSign");
@@ -600,11 +600,14 @@ public class Wechat extends CordovaPlugin {
         return null;
     }
 
-    public static String getAppId() {
-        if (appId == null && wx_preferences != null) {
-            appId = wx_preferences.getString(WXAPPID_PROPERTY_KEY, "");
+    public static String getAppId(CordovaPreferences f_preferences) {
+        if(appId == null){
+            if(f_preferences != null) {
+                appId = f_preferences.getString(WXAPPID_PROPERTY_KEY, "");
+            }else if(wx_preferences != null){
+                appId = wx_preferences.getString(WXAPPID_PROPERTY_KEY, "");
+            }
         }
-
         return appId;
     }
 

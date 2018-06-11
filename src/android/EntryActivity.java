@@ -101,10 +101,10 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
         }
 
         // restore appid
-        final String appid = Wechat.getAppId();
+        final String appid = Wechat.getAppId(null);
         final String savedAppId = Wechat.getSavedAppId(this);
         if (!savedAppId.equals(appid)) {
-            Wechat.saveAppId(this, Wechat.getAppId());
+            Wechat.saveAppId(this, Wechat.getAppId(null));
         }
 
         finish();
