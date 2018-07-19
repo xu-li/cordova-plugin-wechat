@@ -1,6 +1,14 @@
+![](http://www.repostatus.org/badges/latest/unsupported.svg)
+
 # cordova-plugin-wechat
 
 A cordova plugin, a JS version of Wechat SDK
+
+# Warning
+
+This repository is no longer supported. I am sorry for any frustration when using this plugin. If you are willing to be a maintainer, please send me a message.
+
+这个插件不再维护了。如果给你带来任何问题，我很抱歉。如果你想成为维护者，请给我发个消息。
 
 # Feature
 
