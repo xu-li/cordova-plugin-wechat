@@ -514,6 +514,12 @@ public class Wechat extends CordovaPlugin {
                 Bitmap scaled = Bitmap.createScaledBitmap(bmp, width, height, true);
                 bmp.recycle();
 
+                int length = scaled.getRowBytes() * scaled.getHeight();
+
+                if(length > (maxSize/10)*1024) {
+                    scaled = compressImage(scaled,(maxSize/10));
+                }
+
                 bmp = scaled;
             }
 
@@ -528,6 +534,29 @@ public class Wechat extends CordovaPlugin {
         }
 
         return bmp;
+    }
+
+
+    /**
+     * compress bitmap by quility
+     *
+     * @param url
+     * @return
+     */    
+    protected  Bitmap compressImage(Bitmap image,Integer maxSize) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        int options = 90;
+
+        while (baos.toByteArray().length / 1024 > maxSize) { 
+            baos.reset(); 
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);
+            options -= 10;
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);
+        return bitmap;
     }
 
     /**

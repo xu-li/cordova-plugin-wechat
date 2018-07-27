@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.4.0 - 2018-07-27
+### Added
+- Android compress thumb 
+
 ## 2.3.0 - 2018-04-27
 ### Removed
 - Share with mini-program (See #427, #428)
