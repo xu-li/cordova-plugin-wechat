@@ -1,8 +1,12 @@
 # Change Log
 
+## 2.5.0 - 2018-12-21
+### Fixed
+- iOS payment no callback 
+
 ## 2.4.0 - 2018-07-27
 ### Added
-- Android compress thumb 
+- Android compress thumb
 
 ## 2.3.0 - 2018-04-27
 ### Removed

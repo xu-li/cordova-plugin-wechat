@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-wechat"
-    version="2.4.0">
+    version="2.5.0">
 
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
@@ -63,6 +63,8 @@
         <!-- Plugin source code -->
         <header-file src="src/ios/CDVWechat.h" />
         <source-file src="src/ios/CDVWechat.m" />
+        <header-file src="src/ios/AppDelegate+Wechat.h" />
+        <source-file src="src/ios/AppDelegate+Wechat.m" />
 
         <!-- Wechat Official -->
         <header-file src="src/ios/libs/OpenSDK1.8.0/WXApi.h" />

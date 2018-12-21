@@ -12,6 +12,8 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 
 @implementation CDVWechat
 
+static CDVWechat *_sharedInstance = nil;
+
 #pragma mark "API"
 - (void)pluginInitialize {
     NSString* appId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
@@ -19,7 +21,8 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     if (appId && ![appId isEqualToString:self.wechatAppId]) {
         self.wechatAppId = appId;
         [WXApi registerApp: appId];
-        
+        _sharedInstance = self;
+
         NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
     }
 }
@@ -527,6 +530,11 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 {
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
     [self.commandDelegate sendPluginResult:commandResult callbackId:callbackID];
+}
+
++ (CDVWechat *)sharedManager
+{
+    return _sharedInstance;
 }
 
 @end
