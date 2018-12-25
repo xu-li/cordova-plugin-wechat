@@ -20,6 +20,7 @@ import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import org.apache.cordova.CordovaPreferences;
 
 public class Wechat extends CordovaPlugin {
 
@@ -79,6 +81,9 @@ public class Wechat extends CordovaPlugin {
     public static final String KEY_ARG_MESSAGE_MEDIA_EMOTION = "emotion";
     public static final String KEY_ARG_MESSAGE_MEDIA_EXTINFO = "extInfo";
     public static final String KEY_ARG_MESSAGE_MEDIA_URL = "url";
+    public static final String KEY_ARG_MESSAGE_MEDIA_USERNAME = "userName";
+    public static final String KEY_ARG_MESSAGE_MEDIA_MINITYPE = "miniType";
+    public static final String KEY_ARG_MESSAGE_MEDIA_PATH = "path";
 
     public static final int TYPE_WECHAT_SHARING_APP = 1;
     public static final int TYPE_WECHAT_SHARING_EMOTION = 2;
@@ -87,7 +92,7 @@ public class Wechat extends CordovaPlugin {
     public static final int TYPE_WECHAT_SHARING_MUSIC = 5;
     public static final int TYPE_WECHAT_SHARING_VIDEO = 6;
     public static final int TYPE_WECHAT_SHARING_WEBPAGE = 7;
-    public static final int TYPE_WECHAT_SHARING_TEXT = 8;
+    public static final int TYPE_WECHAT_SHARING_MINI = 8;
 
     public static final int SCENE_SESSION = 0;
     public static final int SCENE_TIMELINE = 1;
@@ -99,12 +104,15 @@ public class Wechat extends CordovaPlugin {
     protected static IWXAPI wxAPI;
     protected static String appId;
 
+    protected static CordovaPreferences wx_preferences;
+
+
     @Override
     protected void pluginInitialize() {
 
         super.pluginInitialize();
 
-        String id = getAppId();
+        String id = getAppId(preferences);
 
         // save app id
         saveAppId(cordova.getActivity(), id);
@@ -118,8 +126,12 @@ public class Wechat extends CordovaPlugin {
     protected void initWXAPI() {
         IWXAPI api = getWxAPI(cordova.getActivity());
 
+        if(wx_preferences == null) {
+            wx_preferences = preferences;
+        }
+
         if (api != null) {
-            api.registerApp(getAppId());
+            api.registerApp(getAppId(preferences));
         }
     }
 
@@ -280,7 +292,7 @@ public class Wechat extends CordovaPlugin {
 
         try {
             final String appid = params.getString("appid");
-            final String savedAppid = getAppId(cordova.getActivity());
+            final String savedAppid = getAppId(preferences);
             if (!savedAppid.equals(appid)) {
                 this.saveAppId(cordova.getActivity(), appid);
             }
@@ -332,7 +344,7 @@ public class Wechat extends CordovaPlugin {
                ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
 
                try {
-                   req.appId = getAppId();
+                   req.appId = getAppId(preferences);
                    req.cardType = "INVOICE";
                    req.signType = params.getString("signType");
                    req.cardSign = params.getString("cardSign");
@@ -449,6 +461,14 @@ public class Wechat extends CordovaPlugin {
                     WXVideoObject videoObject = new WXVideoObject();
                     videoObject.videoUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_VIDEOURL);
                     mediaObject = videoObject;
+                    break;
+                case TYPE_WECHAT_SHARING_MINI:
+                    WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+                    miniProgramObj.webpageUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL); // 兼容低版本的网页链接
+                    miniProgramObj.miniprogramType = media.getInt(KEY_ARG_MESSAGE_MEDIA_MINITYPE);// 正式版:0，测试版:1，体验版:2
+                    miniProgramObj.userName = media.getString(KEY_ARG_MESSAGE_MEDIA_USERNAME);     // 小程序原始id
+                    miniProgramObj.path = media.getString(KEY_ARG_MESSAGE_MEDIA_PATH);            //小程序页面路径  
+                    mediaObject = miniProgramObj;
                     break;
 
                 case TYPE_WECHAT_SHARING_WEBPAGE:
@@ -626,9 +646,13 @@ public class Wechat extends CordovaPlugin {
         return null;
     }
 
-    public static String getAppId() {
+    public static String getAppId(CordovaPreferences f_preferences) {
         if (appId == null) {
-            appId = preferences.getString(WXAPPID_PROPERTY_KEY, "");
+            if(f_preferences != null) {
+                appId = f_preferences.getString(WXAPPID_PROPERTY_KEY, "");
+            }else if(wx_preferences != null){
+                appId = wx_preferences.getString(WXAPPID_PROPERTY_KEY, "");
+            }
         }
 
         return appId;
