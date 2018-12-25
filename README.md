@@ -2,6 +2,8 @@
 
 **如果是使用cordova7以上版本，请切换到develop-cordova7分支代码。**
 
+QQ群：190808518
+
 # cordova-plugin-wechat
 
 A cordova plugin, a JS version of Wechat SDK
