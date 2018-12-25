@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.5.0 - 2018-12-26
+### Fixed
+- Android preferences code problem
+
 ## 2.4.0 - 2018-07-27
 ### Added
 - Android compress thumb 
