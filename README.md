@@ -1,6 +1,6 @@
-![](http://www.repostatus.org/badges/latest/active.svg)
+![](https://www.repostatus.org/badges/latest/active.svg)
 
-如果是使用cordova7以上版本，请切换到develop-cordova7分支代码。
+**如果是使用cordova7以上版本，请切换到develop-cordova7分支代码。**
 
 QQ群：190808518
 
