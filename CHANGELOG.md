@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.6.0 - 2019-01-05
+### Fixed
+- Fixed cordova android 7.0 install script bug
+
 ## 2.5.0 - 2018-12-26
 ### Fixed
 - Android preferences code problem

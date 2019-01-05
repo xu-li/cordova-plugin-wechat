@@ -1,7 +1,5 @@
 ![](https://www.repostatus.org/badges/latest/active.svg)
 
-**如果是使用cordova7以上版本，请切换到develop-cordova7分支代码。**
-
 QQ群：190808518
 
 # cordova-plugin-wechat
@@ -138,15 +136,8 @@ See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
 # TODO
 
-1. ~~Add android version~~
+1. share to wechat mini program(微信小程序)
 
-2. ~~Share to wechat session(聊天) and wechat favorite(收藏)~~
-
-3. ~~Add other media types, including music etc.~~
-
-4. ~~Other APIs~~
-
-5. ~~Android Version update~~
 
 # LICENSE
 
