@@ -47,7 +47,7 @@ module.exports = function (context) {
         if(item.name == 'android') {
             var sepc = item.spec.replace('~','').replace('^','');
             console.log(sepc);
-            if (semver.gt(sepc,'7.0.0')) {
+            if (semver.gte(sepc,'7.0.0')) {
                 console.info("Android platform Version above 7.0.0");
                 targetDir  = path.join(projectRoot, "platforms", "android", "app", "src", "main", "java", packageName.replace(/\./g, path.sep), "wxapi");
             }
