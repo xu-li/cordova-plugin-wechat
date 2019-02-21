@@ -1,20 +1,18 @@
 ![](https://www.repostatus.org/badges/latest/active.svg)
 
-[中文文档](README_CN.md)
+# 关于
 
-# cordova-plugin-wechat
+微信sdk的cordova插件
 
-A cordova plugin, a JS version of Wechat SDK
+# 功能
 
-# Feature
+微信登录，微信app支付，微信分享，微信投票
 
-Share title, description, image, and link to wechat moment(朋友圈)，choose invoice from Wechat list
+# demo
 
-# Example
+[cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
 
-See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
-
-# Install
+# 安装
 
 1. ```cordova plugin add cordova-plugin-wechat  --variable wechatappid=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
 
@@ -22,9 +20,9 @@ See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wech
 
 3. (iOS only) if your cordova version <5.1.1,check the URL Type using XCode
 
-# Usage
+# 用法
 
-## Check if wechat is installed
+## 检查微信是否安装
 ```Javascript
 Wechat.isInstalled(function (installed) {
     alert("Wechat installed: " + (installed ? "Yes" : "No"));
@@ -33,7 +31,7 @@ Wechat.isInstalled(function (installed) {
 });
 ```
 
-## Authenticate using Wechat
+## 微信认证
 ```Javascript
 var scope = "snsapi_userinfo",
     state = "_" + (+new Date());
@@ -45,7 +43,7 @@ Wechat.auth(scope, state, function (response) {
 });
 ```
 
-## Share text
+## 分享文本
 ```Javascript
 Wechat.share({
     text: "This is just a plain string",
@@ -57,7 +55,7 @@ Wechat.share({
 });
 ```
 
-## Share media(e.g. link, photo, music, video etc)
+## 分享媒体（例如链接，照片，音乐，视频等）
 ```Javascript
 Wechat.share({
     message: {
@@ -77,14 +75,14 @@ Wechat.share({
 });
 ```
 
-### Share link
+### 分享网页
 ```Javascript
 Wechat.share({
     message: {
         ...
         media: {
             type: Wechat.Type.WEBPAGE,
-            webpageUrl: "http://www.jason-z.com"
+            webpageUrl: "http://tech.qq.com/zt2012/tmtdecode/252.htm"
         }
     },
     scene: Wechat.Scene.TIMELINE   // share to Timeline
@@ -95,7 +93,7 @@ Wechat.share({
 });
 ```
 
-### Share mini program
+### 分享到小程序
 ```Javascript
 Wechat.share({
     message: {
@@ -118,7 +116,7 @@ Wechat.share({
 });
 ```
 
-## Send payment request
+## 发送支付请求
 ```Javascript
 // See https://github.com/xu-li/cordova-plugin-wechat-example/blob/master/server/payment_demo.php for php demo
 var params = {
@@ -157,15 +155,18 @@ Wechat.chooseInvoiceFromWX(data,function(data){
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
+QQ群：190808518
+
 # TODO
 
 1. share to wechat mini program(微信小程序)
 
-# Donate
+# 捐赠
 
-we need your support to improve open source software ,if we induce your develop time ,welcome to donate us.
+开源软件的发展离不开大家的推动和支持，如果我们的插件帮助到了你，欢迎捐赠（注：微信插件）。
 
-[![paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/jasonz1987/6.66)
+![donate.png](donate.png)
+
 
 # LICENSE
 
