@@ -433,7 +433,15 @@ static int const MAX_THUMBNAIL_SIZE = 320;
             mediaObject = [WXVideoObject object];
             ((WXVideoObject*)mediaObject).videoUrl = [media objectForKey:@"videoUrl"];
             break;
-
+        case CDVWXSharingTypeMini:
+            object = [WXMiniProgramObject object];
+            object.webpageUrl = [media objectForKey:@"webpageUrl"];
+            object.userName = [media objectForKey:@"userName"];
+            object.path = [media objectForKey:@"path"];
+            object.hdImageData = [self getNSDataFromURL:[media objectForKey:@"hdImage"]];
+            object.withShareTicket = [media objectForKey:@"withShareTicket"];
+            object.miniProgramType = [media objectForKey:@"miniProgramType"];
+            break;
         case CDVWXSharingTypeWebPage:
         default:
             mediaObject = [WXWebpageObject object];

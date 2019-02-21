@@ -20,6 +20,7 @@ import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -80,6 +81,10 @@ public class Wechat extends CordovaPlugin {
     public static final String KEY_ARG_MESSAGE_MEDIA_EMOTION = "emotion";
     public static final String KEY_ARG_MESSAGE_MEDIA_EXTINFO = "extInfo";
     public static final String KEY_ARG_MESSAGE_MEDIA_URL = "url";
+    public static final String KEY_ARG_MESSAGE_MEDIA_USERNAME = "userName";
+    public static final String KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE = "miniProgramType";
+    public static final String KEY_ARG_MESSAGE_MEDIA_PATH = "path";
+    public static final String KEY_ARG_MESSAGE_MEDIA_WITHSHARETICKET = "withShareTicket";
 
     public static final int TYPE_WECHAT_SHARING_APP = 1;
     public static final int TYPE_WECHAT_SHARING_EMOTION = 2;
@@ -88,7 +93,7 @@ public class Wechat extends CordovaPlugin {
     public static final int TYPE_WECHAT_SHARING_MUSIC = 5;
     public static final int TYPE_WECHAT_SHARING_VIDEO = 6;
     public static final int TYPE_WECHAT_SHARING_WEBPAGE = 7;
-    public static final int TYPE_WECHAT_SHARING_TEXT = 8;
+    public static final int TYPE_WECHAT_SHARING_MINI = 8;
 
     public static final int SCENE_SESSION = 0;
     public static final int SCENE_TIMELINE = 1;
@@ -453,6 +458,16 @@ public class Wechat extends CordovaPlugin {
                     WXVideoObject videoObject = new WXVideoObject();
                     videoObject.videoUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_VIDEOURL);
                     mediaObject = videoObject;
+                    break;
+
+                case TYPE_WECHAT_SHARING_MINI:
+                    WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+                    miniProgramObj.webpageUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL); // 兼容低版本的网页链接
+                    miniProgramObj.miniprogramType = media.getInt(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE);// 正式版:0，测试版:1，体验版:2
+                    miniProgramObj.userName = media.getString(KEY_ARG_MESSAGE_MEDIA_USERNAME);     // 小程序原始id
+                    miniProgramObj.path = media.getString(KEY_ARG_MESSAGE_MEDIA_PATH);            //小程序页面路径  
+                    miniProgramObj.withShareTicket = media.getBoolean(KEY_ARG_MESSAGE_MEDIA_WITHSHARETICKET); // 是否使用带shareTicket的分享
+                    mediaObject = miniProgramObj;
                     break;
 
                 case TYPE_WECHAT_SHARING_WEBPAGE:
