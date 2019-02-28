@@ -163,7 +163,7 @@ var params = {
 };
 
 Wechat.openMiniProgram(params,function(data){
-    console.log(data);
+    console.log(data); // data:{extMsg:""}  extMsg: 对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
 },function(){
     alert('error');
 })
