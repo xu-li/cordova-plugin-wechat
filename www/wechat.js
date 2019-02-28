@@ -167,8 +167,8 @@ module.exports = {
      * @example
      * <code>
      * params: userName, path, miniprogramType  all required
-     * Wechat.openMiniProgram(params, function () {
-     *     alert("Success");
+     * Wechat.openMiniProgram(params, function (data) {
+     *     alert(data.extMsg);
      * }, function (reason) {
      *     alert("Failed: " + reason);
      * });
