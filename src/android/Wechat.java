@@ -82,9 +82,11 @@ public class Wechat extends CordovaPlugin {
     public static final String KEY_ARG_MESSAGE_MEDIA_EXTINFO = "extInfo";
     public static final String KEY_ARG_MESSAGE_MEDIA_URL = "url";
     public static final String KEY_ARG_MESSAGE_MEDIA_USERNAME = "userName";
-    public static final String KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE = "miniProgramType";
+    public static final String KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE = "miniprogramType";
+    public static final String KEY_ARG_MESSAGE_MEDIA_MINIPROGRAM = "miniProgram";
     public static final String KEY_ARG_MESSAGE_MEDIA_PATH = "path";
     public static final String KEY_ARG_MESSAGE_MEDIA_WITHSHARETICKET = "withShareTicket";
+    public static final String KEY_ARG_MESSAGE_MEDIA_HDIMAGEDATA = "hdImageData";
 
     public static final int TYPE_WECHAT_SHARING_APP = 1;
     public static final int TYPE_WECHAT_SHARING_EMOTION = 2;
@@ -189,6 +191,15 @@ public class Wechat extends CordovaPlugin {
 
         final SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction();
+
+        //小程序卡片单独构建
+        JSONObject message = params.getJSONObject(KEY_ARG_MESSAGE);
+        JSONObject media = message.getJSONObject(KEY_ARG_MESSAGE_MEDIA);
+        int type = media.has(KEY_ARG_MESSAGE_MEDIA_TYPE) ? media
+                .getInt(KEY_ARG_MESSAGE_MEDIA_TYPE) : TYPE_WECHAT_SHARING_MINI;
+        if(type == TYPE_WECHAT_SHARING_MINI){
+            req.transaction = buildTransaction(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAM);
+        }
 
         if (params.has(KEY_ARG_SCENE)) {
             switch (params.getInt(KEY_ARG_SCENE)) {
@@ -325,50 +336,50 @@ public class Wechat extends CordovaPlugin {
         return true;
     }
 
-   protected boolean chooseInvoiceFromWX(CordovaArgs args, CallbackContext callbackContext) {
+    protected boolean chooseInvoiceFromWX(CordovaArgs args, CallbackContext callbackContext) {
 
-               final IWXAPI api = getWxAPI(cordova.getActivity());
+        final IWXAPI api = getWxAPI(cordova.getActivity());
 
-               // check if # of arguments is correct
-               final JSONObject params;
-               try {
-                   params = args.getJSONObject(0);
-               } catch (JSONException e) {
-                   callbackContext.error(ERROR_INVALID_PARAMETERS);
-                   return true;
-               }
+        // check if # of arguments is correct
+        final JSONObject params;
+        try {
+            params = args.getJSONObject(0);
+        } catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
 
-               ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
+        ChooseCardFromWXCardPackage.Req req = new ChooseCardFromWXCardPackage.Req();
 
-               try {
-                   req.appId = getAppId(preferences);
-                   req.cardType = "INVOICE";
-                   req.signType = params.getString("signType");
-                   req.cardSign = params.getString("cardSign");
-                   req.nonceStr = params.getString("nonceStr");
-                   req.timeStamp = params.getString("timeStamp");
-                   req.canMultiSelect = "1";
-               } catch (Exception e) {
-                   Log.e(TAG, e.getMessage());
+        try {
+            req.appId = getAppId(preferences);
+            req.cardType = "INVOICE";
+            req.signType = params.getString("signType");
+            req.cardSign = params.getString("cardSign");
+            req.nonceStr = params.getString("nonceStr");
+            req.timeStamp = params.getString("timeStamp");
+            req.canMultiSelect = "1";
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
 
-                   callbackContext.error(ERROR_INVALID_PARAMETERS);
-                   return true;
-               }
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
 
-               if (api.sendReq(req)) {
-                   Log.i(TAG, "Invoice request has been sent successfully.");
+        if (api.sendReq(req)) {
+            Log.i(TAG, "Invoice request has been sent successfully.");
 
-                   // send no result
-                   sendNoResultPluginResult(callbackContext);
-               } else {
-                   Log.i(TAG, "Invoice request has been sent unsuccessfully.");
+            // send no result
+            sendNoResultPluginResult(callbackContext);
+        } else {
+            Log.i(TAG, "Invoice request has been sent unsuccessfully.");
 
-                   // send error
-                   callbackContext.error(ERROR_SEND_REQUEST_FAILED);
-               }
+            // send error
+            callbackContext.error(ERROR_SEND_REQUEST_FAILED);
+        }
 
-               return true;
-           }
+        return true;
+    }
 
     protected boolean isInstalled(CallbackContext callbackContext) {
         final IWXAPI api = getWxAPI(cordova.getActivity());
@@ -462,12 +473,20 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WECHAT_SHARING_MINI:
                     WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
-                    miniProgramObj.webpageUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL); // 兼容低版本的网页链接
-                    miniProgramObj.miniprogramType = media.getInt(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE);// 正式版:0，测试版:1，体验版:2
-                    miniProgramObj.userName = media.getString(KEY_ARG_MESSAGE_MEDIA_USERNAME);     // 小程序原始id
-                    miniProgramObj.path = media.getString(KEY_ARG_MESSAGE_MEDIA_PATH);            //小程序页面路径  
-                    miniProgramObj.withShareTicket = media.getBoolean(KEY_ARG_MESSAGE_MEDIA_WITHSHARETICKET); // 是否使用带shareTicket的分享
-                    mediaObject = miniProgramObj;
+                    try {
+                        miniProgramObj.webpageUrl = media.getString(KEY_ARG_MESSAGE_MEDIA_WEBPAGEURL); // 兼容低版本的网页链接
+                        miniProgramObj.miniprogramType = media.getInt(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE);// 正式版:0，测试版:1，体验版:2
+                        miniProgramObj.userName = media.getString(KEY_ARG_MESSAGE_MEDIA_USERNAME);     // 小程序原始id
+                        miniProgramObj.path = media.getString(KEY_ARG_MESSAGE_MEDIA_PATH);            //小程序页面路径
+                        miniProgramObj.withShareTicket = media.getBoolean(KEY_ARG_MESSAGE_MEDIA_WITHSHARETICKET); // 是否使用带shareTicket的分享
+                        wxMediaMessage = new WXMediaMessage(miniProgramObj);
+                        wxMediaMessage.title = message.getString(KEY_ARG_MESSAGE_TITLE);                    // 小程序消息title
+                        wxMediaMessage.description = message.getString(KEY_ARG_MESSAGE_DESCRIPTION);               // 小程序消息desc
+                        wxMediaMessage.thumbData = Util.readBytes(getFileInputStream(media.getString(KEY_ARG_MESSAGE_MEDIA_HDIMAGEDATA))); // 小程序消息封面图片，小于128k
+                        return wxMediaMessage;
+                    }catch (Exception e){
+                        Log.e(TAG, e.getMessage());
+                    }
                     break;
 
                 case TYPE_WECHAT_SHARING_WEBPAGE:
@@ -567,8 +586,8 @@ public class Wechat extends CordovaPlugin {
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         int options = 90;
 
-        while (baos.toByteArray().length / 1024 > maxSize) { 
-            baos.reset(); 
+        while (baos.toByteArray().length / 1024 > maxSize) {
+            baos.reset();
             image.compress(Bitmap.CompressFormat.JPEG, options, baos);
             options -= 10;
         }
