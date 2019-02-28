@@ -395,8 +395,8 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 
     // media parameters
     id mediaObject = nil;
+    WXMiniProgramObject *object;
     NSDictionary *media = [message objectForKey:@"media"];
-
     // check types
     NSInteger type = [[media objectForKey:@"type"] integerValue];
     switch (type)
@@ -437,11 +437,13 @@ static int const MAX_THUMBNAIL_SIZE = 320;
             object = [WXMiniProgramObject object];
             object.webpageUrl = [media objectForKey:@"webpageUrl"];
             object.userName = [media objectForKey:@"userName"];
-            object.path = [media objectForKey:@"path"];
+            object.path = [media objectForKey:@"path"]; // pages/inbox/inbox?name1=key1&name=key2
             object.hdImageData = [self getNSDataFromURL:[media objectForKey:@"hdImage"]];
-            object.withShareTicket = [media objectForKey:@"withShareTicket"];
-            object.miniProgramType = [media objectForKey:@"miniProgramType"];
-            break;
+            object.withShareTicket = [[media objectForKey:@"withShareTicket"] boolValue];
+            object.miniProgramType = [[media objectForKey:@"miniProgramType"] intValue];
+            wxMediaMessage.mediaObject = object;
+            return wxMediaMessage;
+            
         case CDVWXSharingTypeWebPage:
         default:
             mediaObject = [WXWebpageObject object];

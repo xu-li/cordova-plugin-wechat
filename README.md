@@ -105,12 +105,12 @@ Wechat.share({
             webpageUrl: "http://www.jason-z.com", // 兼容低版本的网页链接
             userName: "wxxxxxxxx", // 小程序原始id
             path: "user/info", // 小程序的页面路径
-            hdImageData: "http://wwww.xxx.com/xx.jpg", // 程序新版本的预览图二进制数据 不超过128kb
+            hdImageData: "http://wwww.xxx.com/xx.jpg", // 程序新版本的预览图二进制数据 不超过128kb 支持 地址 base64 temp
             withShareTicket: true, // 是否使用带shareTicket的分享
             miniprogramType: 0 //正式版:0，测试版:1，体验版:2
         }
     },
-    scene: Wechat.Scene.TIMELINE   // share to Timeline
+    scene: Wechat.Scene.SESSION   // 小程序仅支持聊天界面
 }, function () {
     alert("Success");
 }, function (reason) {
