@@ -151,6 +151,22 @@ Wechat.chooseInvoiceFromWX(data,function(data){
 })
 ```
 
+## 打开微信微信小程序
+```Javascript
+//offical doc https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=21526646437Y6nEC&token=&lang=zh_CN
+var params = {
+    userName: 'gh_d43f693ca31f', // 小程序userName
+    path: 'pages/index/index?name1=key1&name2=key2', // 打开小程序路径
+    miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+};
+
+Wechat.openMiniProgram(params,function(data){
+    console.log(data); // data:{extMsg:""}  extMsg: 对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
+},function(){
+    alert('error');
+})
+```
+
 # FAQ
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).

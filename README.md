@@ -159,11 +159,11 @@ Wechat.chooseInvoiceFromWX(params,function(data){
 var params = {
     userName: 'gh_d43f693ca31f', // userName
     path: 'pages/index/index?name1=key1&name2=key2', // open mini program page
-    miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+    miniprogramType: 0 // Developer version, trial version, and official version are available for selection
 };
 
 Wechat.openMiniProgram(params,function(data){
-    console.log(data); // data:{extMsg:""}  extMsg: 对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
+    console.log(data); // data:{extMsg:""}  extMsg: Corresponds to the app-parameter attribute in the Mini Program component <button open-type="launchApp">
 },function(){
     alert('error');
 })
@@ -176,7 +176,7 @@ See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 # TODO
 
 ~~1. share to wechat mini program(微信小程序)~~  
-  2. App opens WeChat mini program(微信小程序)
+~~2. App opens WeChat mini program(微信小程序)~~
 
 # Donate
 
