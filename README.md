@@ -159,7 +159,7 @@ See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
 # TODO
 
-~~1. share to wechat mini program(微信小程序)~~
+~~1. share to wechat mini program(微信小程序)~~  
   2. App opens WeChat mini program(微信小程序)
 
 # Donate
