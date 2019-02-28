@@ -146,7 +146,23 @@ var params = {
     nonceStr: '5598190f-5fb3-4bff-8314-fd189ab4e4b8', // nonce
 };
 
-Wechat.chooseInvoiceFromWX(data,function(data){
+Wechat.chooseInvoiceFromWX(params,function(data){
+    console.log(data);
+},function(){
+    alert('error');
+})
+```
+
+## open wechat mini program 
+```Javascript
+//offical doc https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=21526646437Y6nEC&token=&lang=zh_CN
+var params = {
+    userName: 'gh_d43f693ca31f', // userName
+    path: 'pages/index/index?name1=key1&name2=key2', // open mini program page
+    miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+};
+
+Wechat.openMiniProgram(params,function(data){
     console.log(data);
 },function(){
     alert('error');

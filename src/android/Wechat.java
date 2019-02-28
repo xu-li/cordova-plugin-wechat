@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXAppExtendObject;
@@ -165,6 +166,8 @@ public class Wechat extends CordovaPlugin {
             return isInstalled(callbackContext);
         }else if (action.equals("chooseInvoiceFromWX")){
             return chooseInvoiceFromWX(args, callbackContext);
+        }else if(action.equals("openMiniProgram")){
+            return openMiniProgram(args,callbackContext);
         }
 
         return false;
@@ -709,4 +712,31 @@ public class Wechat extends CordovaPlugin {
         result.setKeepCallback(true);
         callbackContext.sendPluginResult(result);
     }
+
+    protected boolean openMiniProgram(CordovaArgs args, CallbackContext callbackContext){
+        currentCallbackContext = callbackContext;
+        String appId = getAppId(preferences);; // 填应用AppId
+        IWXAPI api = WXAPIFactory.createWXAPI(cordova.getActivity(), appId);
+
+        final JSONObject params;
+        try {
+            params = args.getJSONObject(0);
+        } catch (JSONException e) {
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            return true;
+        }
+
+        WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
+        try {
+            req.userName = params.getString(KEY_ARG_MESSAGE_MEDIA_USERNAME); // 填小程序原始id
+            req.path = params.getString(KEY_ARG_MESSAGE_MEDIA_PATH);                  //拉起小程序页面的可带参路径，不填默认拉起小程序首页
+            req.miniprogramType = params.getInt(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE);// 可选打开 开发版，体验版和正式版
+            api.sendReq(req);
+        }catch (Exception e){
+            callbackContext.error(ERROR_INVALID_PARAMETERS);
+            Log.e(TAG,e.getMessage());
+        }
+        return true;
+    }
+
 }

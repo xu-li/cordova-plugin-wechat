@@ -159,6 +159,23 @@ module.exports = {
      */
     chooseInvoiceFromWX: function (params, onSuccess, onError) {
         exec(onSuccess, onError, "Wechat", "chooseInvoiceFromWX", [params]);
+    },
+
+    /**
+     * openMiniProgram exq:app opens wechat mini program
+     *
+     * @example
+     * <code>
+     * params: userName, path, miniprogramType  all required
+     * Wechat.openMiniProgram(params, function () {
+     *     alert("Success");
+     * }, function (reason) {
+     *     alert("Failed: " + reason);
+     * });
+     * </code>
+     */
+    openMiniProgram: function (params, onSuccess, onError) {
+        exec(onSuccess, onError, "Wechat", "openMiniProgram", [params]);
     }
 
 };
