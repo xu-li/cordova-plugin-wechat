@@ -277,7 +277,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     NSLog(@"%@", req);
 }
 
-- (void)onResp:(BaseResp *)resp
+- (void)onResp:(WXLaunchMiniProgramResp *)resp
 {
     BOOL success = NO;
     NSString *message = @"Unknown";
@@ -352,6 +352,15 @@ static int const MAX_THUMBNAIL_SIZE = 320;
                     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
                     [self.commandDelegate sendPluginResult:commandResult callbackId:self.currentCallbackId];
                 }
+        else if ([resp isKindOfClass:[WXLaunchMiniProgramResp class]])
+        {
+            NSString *extMsg = resp.extMsg;
+            response = @{
+                         @"extMsg": extMsg
+                         };
+            CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
+            [self.commandDelegate sendPluginResult:commandResult callbackId:self.currentCallbackId];
+        }
         else
         {
             [self successWithCallbackID:self.currentCallbackId];
@@ -537,6 +546,24 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 {
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
     [self.commandDelegate sendPluginResult:commandResult callbackId:callbackID];
+}
+
+-  (void)openMiniProgram:(CDVInvokedUrlCommand *)command
+{
+    NSDictionary *params = [command.arguments objectAtIndex:0];
+    WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
+    launchMiniProgramReq.userName = [params objectForKey:@"userName"];  //拉起的小程序的username
+    launchMiniProgramReq.path = [params objectForKey:@"path"];    //拉起小程序页面的可带参路径，不填默认拉起小程序首页
+    launchMiniProgramReq.miniProgramType = [[params objectForKey:@"miniprogramType"] intValue]; //拉起小程序的类型
+    if ([WXApi sendReq:launchMiniProgramReq])
+    {
+        // save th e callback id
+        self.currentCallbackId = command.callbackId;
+    }
+    else
+    {
+        [self failWithCallbackID:command.callbackId withMessage:@"打开请求失败"];
+    }
 }
 
 @end
