@@ -157,11 +157,11 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 
     PayReq *req = [[PayReq alloc] init];
 
-    NSString *appId = [params objectForKey:requiredParams[5]];
-    if (appId && ![appId isEqualToString:self.wechatAppId]) {
-        self.wechatAppId = appId;
-        [WXApi registerApp: appId];
-    }
+    // NSString *appId = [params objectForKey:requiredParams[5]];
+    // if (appId && ![appId isEqualToString:self.wechatAppId]) {
+    //     self.wechatAppId = appId;
+    //     [WXApi registerApp: appId];
+    // }
 
     req.partnerId = [params objectForKey:requiredParams[0]];
     req.prepayId = [params objectForKey:requiredParams[1]];
