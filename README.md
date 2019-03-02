@@ -173,6 +173,10 @@ Wechat.openMiniProgram(params,function(data){
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
+QQ群：190808518
+
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=8279476de172cacb72a51a5630744316c0069620ad8b33be3abee243af2cc001"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="cordova-wechat官方交流群" title="cordova-wechat官方交流群"></a>
+
 # TODO
 
 ~~1. share to wechat mini program(微信小程序)~~  
@@ -183,6 +187,8 @@ See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 we need your support to improve open source software ,if we induce your develop time ,welcome to donate us.
 
 [![paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/jasonz1987/6.66)
+
+![donate.png](donate.png)
 
 # LICENSE
 
