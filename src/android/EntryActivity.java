@@ -75,6 +75,11 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
                     case ConstantsAPI.COMMAND_CHOOSE_CARD_FROM_EX_CARD_PACKAGE:
                         plunckInvoiceData(resp);
                         break;
+                    case ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM:
+                        Log.d(Wechat.TAG, "miniprogram back;");
+                        WXLaunchMiniProgram.Resp miniProResp = (WXLaunchMiniProgram.Resp) resp;
+                        launchMiniProResp(miniProResp);
+                        break;
                     case ConstantsAPI.COMMAND_PAY_BY_WX:
                     default:
                         ctx.success();
@@ -101,18 +106,6 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
                 break;
         }
 
-        if (resp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
-            WXLaunchMiniProgram.Resp launchMiniProResp = (WXLaunchMiniProgram.Resp) resp;
-            String extraData =launchMiniProResp.extMsg; //对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
-            JSONObject response = new JSONObject();
-            try {
-                response.put("extMsg", extraData);
-            }catch (Exception e){
-                Log.e(Wechat.TAG, e.getMessage());
-            }
-            ctx.success(response);
-        }
-
         finish();
     }
 
@@ -126,6 +119,18 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setPackage(getApplicationContext().getPackageName());
         getApplicationContext().startActivity(intent);
+    }
+
+    protected void launchMiniProResp(WXLaunchMiniProgram.Resp launchMiniProResp){
+        CallbackContext ctx = Wechat.getCurrentCallbackContext();
+        String extraData =launchMiniProResp.extMsg; //对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
+        JSONObject response = new JSONObject();
+        try {
+            response.put("extMsg", extraData);
+        }catch (Exception e){
+            Log.e(Wechat.TAG, e.getMessage());
+        }
+        ctx.success(response);
     }
 
     protected void auth(BaseResp resp) {
