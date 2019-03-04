@@ -603,9 +603,8 @@ public class Wechat extends CordovaPlugin {
      * Get input stream from a url
      */
     protected InputStream getFileInputStream(String url) {
+        InputStream inputStream = null;
         try {
-
-            InputStream inputStream = null;
 
             if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
 
@@ -616,10 +615,10 @@ public class Wechat extends CordovaPlugin {
                     return null;
                 }
 
-                url = file.getAbsolutePath();
+                // url = file.getAbsolutePath();
                 inputStream = new FileInputStream(file);
 
-                Log.d(TAG, String.format("File was downloaded and cached to %s.", url));
+                Log.d(TAG, String.format("File was downloaded and cached to %s.", file.getAbsolutePath()));
 
             } else if (url.startsWith("data:image")) {  // base64 image
 
@@ -650,15 +649,13 @@ public class Wechat extends CordovaPlugin {
 
             }
 
-            return inputStream;
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return inputStream;
     }
 
     public static String getAppId(CordovaPreferences f_preferences) {
