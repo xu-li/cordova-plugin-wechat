@@ -195,13 +195,17 @@ public class Wechat extends CordovaPlugin {
         final SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction();
 
-        //小程序卡片单独构建
-        JSONObject message = params.getJSONObject(KEY_ARG_MESSAGE);
-        JSONObject media = message.getJSONObject(KEY_ARG_MESSAGE_MEDIA);
-        int type = media.has(KEY_ARG_MESSAGE_MEDIA_TYPE) ? media
-                .getInt(KEY_ARG_MESSAGE_MEDIA_TYPE) : TYPE_WECHAT_SHARING_MINI;
-        if(type == TYPE_WECHAT_SHARING_MINI){
-            req.transaction = buildTransaction(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAM);
+        if (params.has(KEY_ARG_MESSAGE)) {
+            //小程序卡片单独构建
+            JSONObject message = params.getJSONObject(KEY_ARG_MESSAGE);
+            if (message.has(KEY_ARG_MESSAGE_MEDIA)) {
+                JSONObject media = message.getJSONObject(KEY_ARG_MESSAGE_MEDIA);
+                int type = media.has(KEY_ARG_MESSAGE_MEDIA_TYPE) ? media
+                        .getInt(KEY_ARG_MESSAGE_MEDIA_TYPE) : TYPE_WECHAT_SHARING_MINI;
+                if (type == TYPE_WECHAT_SHARING_MINI) {
+                    req.transaction = buildTransaction(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAM);
+                }
+            }
         }
 
         if (params.has(KEY_ARG_SCENE)) {
