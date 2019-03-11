@@ -173,13 +173,14 @@ Wechat.openMiniProgram(params,function(data){
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
-QQ群：190808518 [![cordova-wechat官方交流群](https://pub.idqqimg.com/wpa/images/group.png)](shang.qq.com/wpa/qunwpa?idkey=8279476de172cacb72a51a5630744316c0069620ad8b33be3abee243af2cc001)
+QQ群：190808518 
+[![cordova-wechat官方交流群](https://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=8279476de172cacb72a51a5630744316c0069620ad8b33be3abee243af2cc001)
 
 
 # TODO
 
-~~1. share to wechat mini program(微信小程序)~~  
-~~2. App opens WeChat mini program(微信小程序)~~
+1. 收藏功能
+2. 语音识别功能
 
 # Donate
 
