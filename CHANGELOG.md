@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.7.0 - 2019-03-02
+### Added
+- add share to wechat mini program
+- add App opens WeChat mini program
+### Fixed
+- removed libstd c++ from xcode10
+- fix android cordova version 7.0.0 install bug
+- fix ios payment appid param
+
 ## 2.6.0 - 2019-01-05
 ### Fixed
 - Fixed cordova android 7.0 install script bug

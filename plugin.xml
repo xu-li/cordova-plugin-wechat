@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-wechat"
-    version="2.6.0">
+    version="2.7.0">
 
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
@@ -76,7 +76,7 @@
         <framework src="SystemConfiguration.framework" />
         <framework src="Security.framework" />
         <framework src="CFNetwork.framework" />
-        <framework src="libstdc++.6.tbd" />
+        <framework src="libc++.1.tbd" />
     </platform>
 
     <!-- android -->
@@ -105,7 +105,9 @@
             <activity
                 android:name=".wxapi.WXEntryActivity"
                 android:label="@string/launcher_name"
-                android:exported="true">
+                android:exported="true"
+                android:taskAffinity="$PACKAGE_NAME"
+                android:launchMode="singleTask">
                 <intent-filter>
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>

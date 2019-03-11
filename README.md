@@ -1,6 +1,6 @@
 ![](https://www.repostatus.org/badges/latest/active.svg)
 
-QQ群：190808518
+[中文文档](README_CN.md)
 
 # cordova-plugin-wechat
 
@@ -84,10 +84,33 @@ Wechat.share({
         ...
         media: {
             type: Wechat.Type.WEBPAGE,
-            webpageUrl: "http://tech.qq.com/zt2012/tmtdecode/252.htm"
+            webpageUrl: "http://www.jason-z.com"
         }
     },
     scene: Wechat.Scene.TIMELINE   // share to Timeline
+}, function () {
+    alert("Success");
+}, function (reason) {
+    alert("Failed: " + reason);
+});
+```
+
+### Share mini program
+```Javascript
+Wechat.share({
+    message: {
+        ...
+        media: {
+            type: Wechat.Type.MINI,
+            webpageUrl: "http://www.jason-z.com", // 兼容低版本的网页链接
+            userName: "wxxxxxxxx", // 小程序原始id
+            path: "user/info", // 小程序的页面路径
+            hdImageData: "http://wwww.xxx.com/xx.jpg", // 程序新版本的预览图二进制数据 不超过128kb 支持 地址 base64 temp
+            withShareTicket: true, // 是否使用带shareTicket的分享
+            miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+        }
+    },
+    scene: Wechat.Scene.SESSION   // 小程序仅支持聊天界面
 }, function () {
     alert("Success");
 }, function (reason) {
@@ -123,8 +146,24 @@ var params = {
     nonceStr: '5598190f-5fb3-4bff-8314-fd189ab4e4b8', // nonce
 };
 
-Wechat.chooseInvoiceFromWX(data,function(data){
+Wechat.chooseInvoiceFromWX(params,function(data){
     console.log(data);
+},function(){
+    alert('error');
+})
+```
+
+## open wechat mini program 
+```Javascript
+//offical doc https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=21526646437Y6nEC&token=&lang=zh_CN
+var params = {
+    userName: 'gh_d43f693ca31f', // userName
+    path: 'pages/index/index?name1=key1&name2=key2', // open mini program page
+    miniprogramType: 0 // Developer version, trial version, and official version are available for selection
+};
+
+Wechat.openMiniProgram(params,function(data){
+    console.log(data); // data:{extMsg:""}  extMsg: Corresponds to the app-parameter attribute in the Mini Program component <button open-type="launchApp">
 },function(){
     alert('error');
 })
@@ -134,10 +173,22 @@ Wechat.chooseInvoiceFromWX(data,function(data){
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 
+QQ群：190808518 
+[![cordova-wechat官方交流群](https://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=8279476de172cacb72a51a5630744316c0069620ad8b33be3abee243af2cc001)
+
+
 # TODO
 
-1. share to wechat mini program(微信小程序)
+1. 收藏功能
+2. 语音识别功能
 
+# Donate
+
+we need your support to improve open source software ,if we induce your develop time ,welcome to donate us.
+
+[![paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/jasonz1987/6.66)
+
+![donate.png](donate.png)
 
 # LICENSE
 
