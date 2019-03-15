@@ -8,14 +8,20 @@ module.exports = {
     },
 
     Type: {
-        APP:     1,
-        EMOTION: 2,
-        FILE:    3,
+        APP:     1,// 已废弃
+        EMOTION: 2,// 已废弃
+        FILE:    3,// 已废弃
         IMAGE:   4,
         MUSIC:   5,
         VIDEO:   6,
         WEBPAGE: 7,
         MINI:    8
+    },
+
+    Mini: {
+        RELEASE: 0, // 正式版
+        TEST:    1, // 测试版
+        PREVIEW: 2  // 体验版
     },
 
     isInstalled: function (onSuccess, onError) {

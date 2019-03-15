@@ -449,7 +449,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
             object.path = [media objectForKey:@"path"]; // pages/inbox/inbox?name1=key1&name=key2
             object.hdImageData = [self getNSDataFromURL:[media objectForKey:@"hdImage"]];
             object.withShareTicket = [[media objectForKey:@"withShareTicket"] boolValue];
-            object.miniProgramType = [[media objectForKey:@"miniProgramType"] intValue];
+            object.miniProgramType = (int)[[media objectForKey:@"miniProgramType"] integerValue];
             wxMediaMessage.mediaObject = object;
             return wxMediaMessage;
             
@@ -554,7 +554,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
     launchMiniProgramReq.userName = [params objectForKey:@"userName"];  //拉起的小程序的username
     launchMiniProgramReq.path = [params objectForKey:@"path"];    //拉起小程序页面的可带参路径，不填默认拉起小程序首页
-    launchMiniProgramReq.miniProgramType = [[params objectForKey:@"miniprogramType"] intValue]; //拉起小程序的类型
+    launchMiniProgramReq.miniProgramType = (int)[[params objectForKey:@"miniprogramType"] integerValue]; //拉起小程序的类型
     if ([WXApi sendReq:launchMiniProgramReq])
     {
         // save th e callback id
