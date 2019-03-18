@@ -7,7 +7,7 @@
 
 # cordova-plugin-wechat
 
-A cordova plugin, a JS version of Wechat SDK
+        A cordova plugin, a JS version of Wechat SDK
 
 # Feature
 
@@ -15,7 +15,9 @@ Share title, description, image, and link to wechat moment(朋友圈)，choose i
 
 # Example
 
-See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
+[ionic3 demo](https://github.com/jasonz1987/ionic3-wechat-sdk-demo)
+
+[ionic1/2 demo](https://github.com/xu-li/cordova-plugin-wechat-example)
 
 # Install
 

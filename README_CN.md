@@ -12,7 +12,9 @@
 
 # demo
 
-[cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
+[ionic3 demo](https://github.com/jasonz1987/ionic3-wechat-sdk-demo)
+
+[ionic1/2 demo](https://github.com/xu-li/cordova-plugin-wechat-example)
 
 # 安装
 

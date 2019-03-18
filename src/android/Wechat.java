@@ -463,7 +463,7 @@ public class Wechat extends CordovaPlugin {
                     Bitmap image = getBitmap(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE, 0);
                     // give some tips to user           
                     if(image != null) {
-                        ediaObject = new WXImageObject(image);
+                        mediaObject = new WXImageObject(image);
                         image.recycle();
                     }
                     break;
