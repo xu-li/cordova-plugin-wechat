@@ -1,4 +1,6 @@
-![](https://www.repostatus.org/badges/latest/active.svg)
+![Active](https://www.repostatus.org/badges/latest/active.svg)
+![Downloads](https://img.shields.io/npm/dt/cordova-plugin-wechat.svg)
+![version](https://img.shields.io/npm/v/cordova-plugin-wechat/latest.svg)
 
 # 关于
 
@@ -10,7 +12,9 @@
 
 # demo
 
-[cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
+[ionic3 demo](https://github.com/jasonz1987/ionic3-wechat-sdk-demo)
+
+[ionic1/2 demo](https://github.com/xu-li/cordova-plugin-wechat-example)
 
 # 安装
 
@@ -105,7 +109,7 @@ Wechat.share({
             path: "user/info", // 小程序的页面路径
             hdImageData: "http://wwww.xxx.com/xx.jpg", // 程序新版本的预览图二进制数据 不超过128kb
             withShareTicket: true, // 是否使用带shareTicket的分享
-            miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+            miniprogramType: Wechat.Mini.RELEASE //正式版:0，测试版:1，体验版:2
         }
     },
     scene: Wechat.Scene.TIMELINE   // share to Timeline
@@ -157,7 +161,7 @@ Wechat.chooseInvoiceFromWX(data,function(data){
 var params = {
     userName: 'gh_d43f693ca31f', // 小程序userName
     path: 'pages/index/index?name1=key1&name2=key2', // 打开小程序路径
-    miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+    miniprogramType: Wechat.Mini.RELEASE //正式版:0，测试版:1，体验版:2
 };
 
 Wechat.openMiniProgram(params,function(data){
@@ -176,8 +180,7 @@ QQ群：190808518  [![cordova-wechat官方交流群](https://pub.idqqimg.com/wpa
 
 # TODO
 
-1. 收藏功能
-2. 语音识别功能
+1. 增加参数检查
 
 # 捐赠
 

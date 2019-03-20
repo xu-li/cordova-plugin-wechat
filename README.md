@@ -1,10 +1,13 @@
-![](https://www.repostatus.org/badges/latest/active.svg)
+![Active](https://www.repostatus.org/badges/latest/active.svg)
+![Downloads](https://img.shields.io/npm/dt/cordova-plugin-wechat.svg)
+![version](https://img.shields.io/npm/v/cordova-plugin-wechat/latest.svg)
+
 
 [中文文档](README_CN.md)
 
 # cordova-plugin-wechat
 
-A cordova plugin, a JS version of Wechat SDK
+        A cordova plugin, a JS version of Wechat SDK
 
 # Feature
 
@@ -12,7 +15,9 @@ Share title, description, image, and link to wechat moment(朋友圈)，choose i
 
 # Example
 
-See [cordova-plugin-wechat-example](https://github.com/xu-li/cordova-plugin-wechat-example)
+[ionic3 demo](https://github.com/jasonz1987/ionic3-wechat-sdk-demo)
+
+[ionic1/2 demo](https://github.com/xu-li/cordova-plugin-wechat-example)
 
 # Install
 
@@ -102,12 +107,12 @@ Wechat.share({
         ...
         media: {
             type: Wechat.Type.MINI,
-            webpageUrl: "http://www.jason-z.com", // 兼容低版本的网页链接
+            webpageUrl: "https://www.jason-z.com", // 兼容低版本的网页链接
             userName: "wxxxxxxxx", // 小程序原始id
             path: "user/info", // 小程序的页面路径
             hdImageData: "http://wwww.xxx.com/xx.jpg", // 程序新版本的预览图二进制数据 不超过128kb 支持 地址 base64 temp
             withShareTicket: true, // 是否使用带shareTicket的分享
-            miniprogramType: 0 //正式版:0，测试版:1，体验版:2
+            miniprogramType: Wechat.Mini.RELEASE 
         }
     },
     scene: Wechat.Scene.SESSION   // 小程序仅支持聊天界面
@@ -159,7 +164,7 @@ Wechat.chooseInvoiceFromWX(params,function(data){
 var params = {
     userName: 'gh_d43f693ca31f', // userName
     path: 'pages/index/index?name1=key1&name2=key2', // open mini program page
-    miniprogramType: 0 // Developer version, trial version, and official version are available for selection
+    miniprogramType: Wechat.Mini.RELEASE // Developer version, trial version, and official version are available for selection
 };
 
 Wechat.openMiniProgram(params,function(data){
@@ -179,8 +184,7 @@ QQ群：190808518
 
 # TODO
 
-1. 收藏功能
-2. 语音识别功能
+1. check params for method
 
 # Donate
 
