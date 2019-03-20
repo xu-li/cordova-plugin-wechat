@@ -461,8 +461,11 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WECHAT_SHARING_IMAGE:
                     Bitmap image = getBitmap(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE, 0);
-                    mediaObject = new WXImageObject(image);
-                    image.recycle();
+                    // give some tips to user           
+                    if(image != null) {
+                        mediaObject = new WXImageObject(image);
+                        image.recycle();
+                    }
                     break;
 
                 case TYPE_WECHAT_SHARING_MUSIC:
