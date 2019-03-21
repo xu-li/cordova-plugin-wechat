@@ -2,34 +2,37 @@
 ![Downloads](https://img.shields.io/npm/dt/cordova-plugin-wechat.svg)
 ![version](https://img.shields.io/npm/v/cordova-plugin-wechat/latest.svg)
 
-
-[中文文档](README_CN.md)
-
 # cordova-plugin-wechat
 
-        A cordova plugin, a JS version of Wechat SDK
+A cordova plugin, a JS version of Wechat SDK
 
 # Feature
 
-Share title, description, image, and link to wechat moment(朋友圈)，choose invoice from Wechat list
+* check wechat client is installed;
+* Share text, image, link,music,video,miniprogram to wechat timeline,session or favorite;
+* open wechat auth;
+* send wechat payment request;
+* open wechat miniprogram;
 
-# Example
+# Documentation
 
-[ionic3 demo](https://github.com/jasonz1987/ionic3-wechat-sdk-demo)
-
-[ionic1/2 demo](https://github.com/xu-li/cordova-plugin-wechat-example)
+[文档](https://jasonz1987.github.io/cordova-wechat-docs/) · [教程](https://www.jason-z.com/course/3) · [FAQ](https://jasonz1987.github.io/cordova-wechat-docs/docs/faq) · [DEMO](https://jasonz1987.github.io/cordova-wechat-docs/docs/demo)
 
 # Install
 
-1. ```cordova plugin add cordova-plugin-wechat  --variable wechatappid=YOUR_WECHAT_APPID```, or using [plugman](https://npmjs.org/package/plugman), [phonegap](https://npmjs.org/package/phonegap), [ionic](http://ionicframework.com/)
+```shell
+cordova plugin add cordova-plugin-wechat  --variable wechatappid=YOUR_WECHAT_APPID
+```
 
-2. ```cordova build ios``` or ```cordova build android```
+```shell
+cordova build ios
+cordova build android
+```
 
-3. (iOS only) if your cordova version <5.1.1,check the URL Type using XCode
-
-# Usage
+# Usage 
 
 ## Check if wechat is installed
+
 ```Javascript
 Wechat.isInstalled(function (installed) {
     alert("Wechat installed: " + (installed ? "Yes" : "No"));
@@ -174,17 +177,12 @@ Wechat.openMiniProgram(params,function(data){
 })
 ```
 
-# FAQ
+more usage  please see [https://jasonz1987.github.io/cordova-wechat-docs/docs/usages](https://jasonz1987.github.io/cordova-wechat-docs/docs/usages)
 
-See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
+# Join us
 
 QQ群：190808518 
 [![cordova-wechat官方交流群](https://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=8279476de172cacb72a51a5630744316c0069620ad8b33be3abee243af2cc001)
-
-
-# TODO
-
-1. check params for method
 
 # Donate
 
