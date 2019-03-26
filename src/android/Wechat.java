@@ -63,6 +63,8 @@ public class Wechat extends CordovaPlugin {
     public static final String ERROR_WECHAT_RESPONSE_UNKNOWN = "未知错误";
 
     public static final String EXTERNAL_STORAGE_IMAGE_PREFIX = "external://";
+    public static final int REQUEST_CODE_ENABLE_PERMISSION = 55433;
+    public static final String ANDROID_WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE";
 
     public static final String KEY_ARG_MESSAGE = "message";
     public static final String KEY_ARG_SCENE = "scene";
@@ -611,6 +613,12 @@ public class Wechat extends CordovaPlugin {
         try {
 
             if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    if (!cordova.hasPermission(ANDROID_WRITE_EXTERNAL_STORAGE)) {
+                        cordova.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, ANDROID_WRITE_EXTERNAL_STORAGE);
+                    }
+                }
 
                 File file = Util.downloadAndCacheFile(webView.getContext(), url);
 
