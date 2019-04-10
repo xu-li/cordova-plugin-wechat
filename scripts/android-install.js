@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
 module.exports = function (context) {
-    var path        = context.requireCordovaModule('path'),
-        fs          = context.requireCordovaModule('fs'),
-        shell       = context.requireCordovaModule('shelljs'),
-        semver      = context.requireCordovaModule('semver'),
+    var path        = require('path'),
+        fs          = require('fs'),
+        shell       = require('shelljs'),
+        semver      = require('semver'),
+    // var path        = context.requireCordovaModule('path'),
+    //     fs          = context.requireCordovaModule('fs'),
+    //     shell       = context.requireCordovaModule('shelljs'),
+    //     semver      = context.requireCordovaModule('semver'),
         projectRoot = context.opts.projectRoot,
         plugins     = context.opts.plugins || [];
 
