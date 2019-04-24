@@ -457,7 +457,14 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WECHAT_SHARING_FILE:
                     WXFileObject fileObject = new WXFileObject();
-                    fileObject.filePath = media.getString(KEY_ARG_MESSAGE_MEDIA_FILE);
+                    InputStream file = getFileInputStream(media.getString(KEY_ARG_MESSAGE_MEDIA_FILE));
+                    if (file != null) {
+                        try {
+                            fileObject.fileData = Util.readBytes(file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     mediaObject = fileObject;
                     break;
 
