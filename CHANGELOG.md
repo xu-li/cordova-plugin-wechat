@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.8.0 - 2019-04-26
+### Added
+- cordova 9.0 support
+- cordova 7.0 support renew
+- add share image permission request on android
+- add share file path support
+
 ## 2.7.0 - 2019-03-02
 ### Added
 - add share to wechat mini program

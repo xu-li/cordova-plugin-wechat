@@ -447,7 +447,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
             object.webpageUrl = [media objectForKey:@"webpageUrl"];
             object.userName = [media objectForKey:@"userName"];
             object.path = [media objectForKey:@"path"]; // pages/inbox/inbox?name1=key1&name=key2
-            object.hdImageData = [self getNSDataFromURL:[media objectForKey:@"hdImage"]];
+            object.hdImageData = [self getNSDataFromURL:[media objectForKey:@"hdImageData"]];
             object.withShareTicket = [[media objectForKey:@"withShareTicket"] boolValue];
             object.miniProgramType = (int)[[media objectForKey:@"miniProgramType"] integerValue];
             wxMediaMessage.mediaObject = object;

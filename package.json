@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-wechat",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "A cordova plugin, a JS version of Wechat SDK",
   "cordova": {
     "id": "cordova-plugin-wechat",
@@ -33,6 +33,9 @@
           "cordova-ios": ">=4.3.1"
         }
     }
+  },
+  "dependencies":{
+    "shelljs": "^0.5.3"
   },
   "author": "xu.li <AthenaLightenedMyPath@gmail.com>",
   "license": "MIT",

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
@@ -63,6 +64,8 @@ public class Wechat extends CordovaPlugin {
     public static final String ERROR_WECHAT_RESPONSE_UNKNOWN = "未知错误";
 
     public static final String EXTERNAL_STORAGE_IMAGE_PREFIX = "external://";
+    public static final int REQUEST_CODE_ENABLE_PERMISSION = 55433;
+    public static final String ANDROID_WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE";
 
     public static final String KEY_ARG_MESSAGE = "message";
     public static final String KEY_ARG_SCENE = "scene";
@@ -306,13 +309,12 @@ public class Wechat extends CordovaPlugin {
         PayReq req = new PayReq();
 
         try {
-            final String appid = params.getString("appid");
-            final String savedAppid = getSavedAppId(cordova.getActivity());
-            if (!savedAppid.equals(appid)) {
-                this.saveAppId(cordova.getActivity(), appid);
-            }
-
-            req.appId = appid;
+            // final String appid = params.getString("appid");
+            // final String savedAppid = getSavedAppId(cordova.getActivity());
+            // if (!savedAppid.equals(appid)) {
+            //     this.saveAppId(cordova.getActivity(), appid);
+            // }
+            req.appId = getAppId(preferences);
             req.partnerId = params.has("mch_id") ? params.getString("mch_id") : params.getString("partnerid");
             req.prepayId = params.has("prepay_id") ? params.getString("prepay_id") : params.getString("prepayid");
             req.nonceStr = params.has("nonce") ? params.getString("nonce") : params.getString("noncestr");
@@ -455,7 +457,14 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WECHAT_SHARING_FILE:
                     WXFileObject fileObject = new WXFileObject();
-                    fileObject.filePath = media.getString(KEY_ARG_MESSAGE_MEDIA_FILE);
+                    InputStream file = getFileInputStream(media.getString(KEY_ARG_MESSAGE_MEDIA_FILE));
+                    if (file != null) {
+                        try {
+                            fileObject.fileData = Util.readBytes(file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     mediaObject = fileObject;
                     break;
 
@@ -614,6 +623,12 @@ public class Wechat extends CordovaPlugin {
         try {
 
             if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    if (!cordova.hasPermission(ANDROID_WRITE_EXTERNAL_STORAGE)) {
+                        cordova.requestPermission(this, REQUEST_CODE_ENABLE_PERMISSION, ANDROID_WRITE_EXTERNAL_STORAGE);
+                    }
+                }
 
                 File file = Util.downloadAndCacheFile(webView.getContext(), url);
 

@@ -8,9 +8,9 @@ module.exports = {
     },
 
     Type: {
-        APP:     1,// 已废弃
-        EMOTION: 2,// 已废弃
-        FILE:    3,// 已废弃
+        APP:     1,
+        EMOTION: 2,
+        FILE:    3,
         IMAGE:   4,
         MUSIC:   5,
         VIDEO:   6,
