@@ -139,11 +139,11 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     NSArray *requiredParams;
     if ([params objectForKey:@"mch_id"])
     {
-        requiredParams = @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign", @"appid"];
+        requiredParams = @[@"mch_id", @"prepay_id", @"timestamp", @"nonce", @"sign"];
     }
     else
     {
-        requiredParams = @[@"partnerid", @"prepayid", @"timestamp", @"noncestr", @"sign", @"appid"];
+        requiredParams = @[@"partnerid", @"prepayid", @"timestamp", @"noncestr", @"sign"];
     }
 
     for (NSString *key in requiredParams)
