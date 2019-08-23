@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.9.0 - 2019-08-23
+### Fixed
+- remove appid param from ios wechat payment
+
 ## 2.8.0 - 2019-04-26
 ### Added
 - cordova 9.0 support
