@@ -43,12 +43,17 @@ module.exports = function (context) {
         console.info("Android platform has not been added.");
         return ;
     }
+    
+    var targetDir;
 
-    var targetDir  = path.join(projectRoot, "platforms", "android", "src", packageName.replace(/\./g, path.sep), "wxapi");
-
- 	if (!fs.existsSync(targetDir)) {
-		targetDir  = path.join(projectRoot, "platforms", "android", "app", "src", "main", "java", packageName.replace(/\./g, path.sep), "wxapi");
-	} 
+    var tempDir = path.join(projectRoot, "platforms", "android", "src", packageName.replace(/\./g, path.sep));
+    if(!fs.existsSync(tempDir)){
+        // cordova-android version >= 7.0
+        targetDir  = path.join(projectRoot, "platforms", "android", "app", "src", "main", "java", packageName.replace(/\./g, path.sep), "wxapi");
+    }else{
+        // cordova-android version < 7.0
+        targetDir  = path.join(projectRoot, "platforms", "android", "src", packageName.replace(/\./g, path.sep), "wxapi");
+    }
 
     // var engines =  config.getEngines();
 
