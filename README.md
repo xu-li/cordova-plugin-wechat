@@ -2,9 +2,20 @@
 ![Downloads](https://img.shields.io/npm/dt/cordova-plugin-wechat.svg)
 ![version](https://img.shields.io/npm/v/cordova-plugin-wechat/latest.svg)
 
+
+# 重要说明
+
+Due to the security upgrade of iOS 13 system version, the official WeChat SDK has been adapted from 1.8.6 with supports * Universal Links * mode jumps, and the validity check when sharing.
+
+
+From version 3.0.0 of our plugin, we changed to the latest WeChat SDK. Before using it, you need to configure the *Universal Links* service, and pay attention to passing  the `universallink` variable when installing the plugin, otherwise it will not work properly.
+
+If you don't want to use the new version features, you can fall back to version 3.0.0 prior
+
 # cordova-plugin-wechat
 
 A cordova plugin, a JS version of Wechat SDK
+
 
 # Feature
 
@@ -21,7 +32,7 @@ A cordova plugin, a JS version of Wechat SDK
 # Install
 
 ```shell
-cordova plugin add cordova-plugin-wechat  --variable wechatappid=YOUR_WECHAT_APPID
+cordova plugin add cordova-plugin-wechat  --variable wechatappid=YOUR_WECHAT_APPID --variable universallink=YOUR_UNIVERSAL_LINK
 ```
 
 ```shell
