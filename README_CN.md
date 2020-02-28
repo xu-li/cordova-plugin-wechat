@@ -2,6 +2,14 @@
 ![Downloads](https://img.shields.io/npm/dt/cordova-plugin-wechat.svg)
 ![version](https://img.shields.io/npm/v/cordova-plugin-wechat/latest.svg)
 
+# 重要说明
+
+由于苹果iOS 13系统版本安全升级，微信官方SDK在1.8.6版本进行了适配并且支持*Universal Links*方式跳转，以及分享时的合法性校验。
+
+插件3.0.0版本接入了最新的微信SDK，在使用之前你需要配置Universal Links服务，并且在安装插件的时候注意传入`universallink`变量，否则将无法正常使用。
+
+如果你不想使用新版本功能，可以回退3.0.0版本之前。
+
 # 关于
 
 微信sdk的cordova插件
