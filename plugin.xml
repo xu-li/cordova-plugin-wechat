@@ -4,7 +4,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-wechat"
-    version="2.9.0">
+    version="3.0.0">
 
     <name>Wechat</name>
     <description>A cordova plugin, a JS version of Wechat SDK</description>
@@ -16,6 +16,7 @@
     <!-- add this to your config.xml -->
     <!-- <preference name="WECHATAPPID" value="YOUR_WECHAT_APP_ID_HERE" /> -->
     <preference name="WECHATAPPID" />
+    <preference name="UNIVERSALLINK" />
 
     <!-- js module-->
     <js-module src="www/wechat.js" name="Wechat">
@@ -30,12 +31,14 @@
                 <param name="onload" value="true" />
             </feature>
             <preference name="WECHATAPPID" value="$WECHATAPPID"/>
+            <preference name="UNIVERSALLINK" value="$UNIVERSALLINK"/>
         </config-file>
 
         <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
             <array>
                 <string>weixin</string>
                 <string>wechat</string>
+                <string>weixinULAPI</string>
             </array>
         </config-file>
 
@@ -63,11 +66,14 @@
         <!-- Plugin source code -->
         <header-file src="src/ios/CDVWechat.h" />
         <source-file src="src/ios/CDVWechat.m" />
+        <header-file src="src/ios/AppDelegate+Wechat.h" />
+        <source-file src="src/ios/AppDelegate+Wechat.m" />
 
         <!-- Wechat Official -->
-        <header-file src="src/ios/libs/OpenSDK1.8.0/WXApi.h" />
-        <header-file src="src/ios/libs/OpenSDK1.8.0/WXApiObject.h" />
-        <source-file src="src/ios/libs/OpenSDK1.8.0/libWeChatSDK.a" framework="true" />
+        <header-file src="src/ios/libs/OpenSDK1.8.6.2/WXApi.h" />
+        <header-file src="src/ios/libs/OpenSDK1.8.6.2/WXApiObject.h" />
+        <header-file src="src/ios/libs/OpenSDK1.8.6.2/WechatAuthSDK.h" />
+        <source-file src="src/ios/libs/OpenSDK1.8.6.2/libWeChatSDK.a" framework="true" />
 
         <!-- Other required frameworks -->
         <framework src="libz.tbd" />
@@ -76,6 +82,8 @@
         <framework src="SystemConfiguration.framework" />
         <framework src="Security.framework" />
         <framework src="CFNetwork.framework" />
+        <framework src="CoreGraphics.framework" />
+        <framework src="Webkit.framework" />
         <framework src="libc++.1.tbd" />
     </platform>
 

@@ -1,5 +1,12 @@
 # Change Log
 
+## 3.0.0 - 2020-02-20
+### Added
+- IOS Opensdk 1.8.6.2
+- Support *Universal Links*
+### Fixed
+- Remove IOS Deprecated Method
+
 ## 2.9.0 - 2019-08-23
 ### Fixed
 - remove appid param from ios wechat payment
