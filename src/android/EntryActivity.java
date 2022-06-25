@@ -30,6 +30,7 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Wechat.data = "";
 
         IWXAPI api = Wechat.getWxAPI(this);
 
@@ -111,6 +112,13 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onReq(BaseReq req) {
+        //获取开放标签传递的 extinfo 数据逻辑
+        if(req.getType() == ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX && req instanceof ShowMessageFromWX.Req) {
+            ShowMessageFromWX.Req showReq = (ShowMessageFromWX.Req) req;
+            WXMediaMessage mediaMsg = showReq.message;
+            String extInfo = mediaMsg.messageExt;
+            Wechat.data = extInfo;
+        }
         finish();
     }
 

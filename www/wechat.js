@@ -28,6 +28,10 @@ module.exports = {
         exec(onSuccess, onError, "Wechat", "isWXAppInstalled", []);
     },
 
+    openApp: function (params, onSuccess, onError) {
+        exec(onSuccess, onError, "Wechat", "openApp", []);
+    }
+
     /**
      * Share a message to wechat app
      *

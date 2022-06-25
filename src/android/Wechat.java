@@ -111,6 +111,7 @@ public class Wechat extends CordovaPlugin {
     protected static IWXAPI wxAPI;
     protected static String appId;
     protected static CordovaPreferences wx_preferences;
+    public static String data = "";
 
     @Override
     protected void pluginInitialize() {
@@ -171,6 +172,8 @@ public class Wechat extends CordovaPlugin {
             return chooseInvoiceFromWX(args, callbackContext);
         }else if(action.equals("openMiniProgram")){
             return openMiniProgram(args,callbackContext);
+        }else if(action.equals("openApp")){
+            return openApp(args,callbackContext);
         }
 
         return false;
@@ -755,6 +758,13 @@ public class Wechat extends CordovaPlugin {
             callbackContext.error(ERROR_INVALID_PARAMETERS);
             Log.e(TAG,e.getMessage());
         }
+        return true;
+    }
+
+    protected boolean openApp(CallbackContext callbackContext) {
+        callbackContext.success(Wechat.data);
+        Wechat.data = "";
+
         return true;
     }
 
