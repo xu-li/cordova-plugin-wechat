@@ -173,7 +173,7 @@ public class Wechat extends CordovaPlugin {
         }else if(action.equals("openMiniProgram")){
             return openMiniProgram(args,callbackContext);
         }else if(action.equals("openApp")){
-            return openApp(args,callbackContext);
+            return openApp(callbackContext);
         }
 
         return false;
