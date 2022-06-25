@@ -28,7 +28,7 @@ module.exports = {
         exec(onSuccess, onError, "Wechat", "isWXAppInstalled", []);
     },
 
-    openApp: function (params, onSuccess, onError) {
+    openApp: function (onSuccess, onError) {
         exec(onSuccess, onError, "Wechat", "openApp", []);
     },
 
