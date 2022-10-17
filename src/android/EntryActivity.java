@@ -165,8 +165,8 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
             JSONObject response = new JSONObject();
 
              if(resp1.cardItemList == null){
-              ctx.error(Wechat.ERROR_WECHAT_RESPONSE_USER_CANCEL);
-              return ;
+                ctx.error(Wechat.ERROR_WECHAT_RESPONSE_USER_CANCEL);
+                return ;
             }
 
             try {
