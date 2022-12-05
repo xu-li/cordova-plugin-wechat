@@ -286,11 +286,11 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 {
     NSLog(@"%@", req);
     //获取开放标签传递的 extinfo 数据逻辑
-	if ([req isKindOfClass:[LaunchFromWXReq class]]) 
+	if ([req isKindOfClass:[LaunchFromWXReq class]])
 	{
-		WXMediaMessage *msg = req.message;
-		NSString *openID = req.openID;
-		NSString *extinfo = req.msg.messageExt;
+        	LaunchFromWXReq* wxReq = (LaunchFromWXReq*)req;
+		WXMediaMessage *msg = wxReq.message;
+        	NSString *extinfo = msg.messageExt;
 		self.wechatData = extinfo;
 	}
 }
