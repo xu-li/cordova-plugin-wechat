@@ -24,6 +24,8 @@ import org.json.JSONObject;
 
 import xu.li.cordova.wechat.Wechat;
 
+
+
 /**
  * Created by xu.li<AthenaLightenedMyPath@gmail.com> on 9/1/15.
  */
@@ -120,9 +122,10 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
             WXMediaMessage mediaMsg = showReq.message;
             String extInfo = mediaMsg.messageExt;
             Wechat.data = extInfo;
-			Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(intent);
+	//		Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());
+        //    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         //   getApplicationContext().startActivity(intent);
+		Wechat.callJS(extInfo);
         }
         finish();
     }
