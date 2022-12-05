@@ -291,7 +291,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 		WXMediaMessage *msg = req.message;
 		NSString *openID = req.openID;
 		NSString *extinfo = req.msg.messageExt;
-		self.wechatData = extInfo;
+		self.wechatData = extinfo;
 	}
 }
 
