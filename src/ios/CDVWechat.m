@@ -24,6 +24,7 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         
         NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
     }
+    self.wechatData = @"";
 }
 
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
@@ -31,6 +32,15 @@ static int const MAX_THUMBNAIL_SIZE = 320;
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[WXApi isWXAppInstalled]];
 
     [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+}
+
+- (void)openApp:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.wechatData];
+
+    [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+    
+    self.wechatData = @"";
 }
 
 - (void)share:(CDVInvokedUrlCommand *)command
@@ -275,6 +285,14 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 - (void)onReq:(BaseReq *)req
 {
     NSLog(@"%@", req);
+    //获取开放标签传递的 extinfo 数据逻辑
+	if ([req isKindOfClass:[LaunchFromWXReq class]])
+	{
+        	LaunchFromWXReq* wxReq = (LaunchFromWXReq*)req;
+		WXMediaMessage *msg = wxReq.message;
+        	NSString *extinfo = msg.messageExt;
+		self.wechatData = extinfo;
+	}
 }
 
 - (void)onResp:(WXLaunchMiniProgramResp *)resp
