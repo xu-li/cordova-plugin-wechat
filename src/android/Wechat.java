@@ -30,6 +30,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaPreferences;
@@ -112,7 +113,7 @@ public class Wechat extends CordovaPlugin {
     protected static CordovaPreferences wx_preferences;
     private static Wechat instance;
     private static Activity cordovaActivity;
-
+    private static String extinfo;
 
     @Override
     protected void pluginInitialize() {
@@ -130,13 +131,16 @@ public class Wechat extends CordovaPlugin {
         // 保存引用
         instance = this;
         cordovaActivity = cordova.getActivity();
+        if (extinfo != null) {
+            transmitLaunchFromWX(extinfo);
+        }
 
         Log.d(TAG, "plugin initialized.");
     }
 
     protected void initWXAPI() {
         IWXAPI api = getWxAPI(cordova.getActivity());
-        if(wx_preferences == null) {
+        if (wx_preferences == null) {
             wx_preferences = preferences;
         }
         if (api != null) {
@@ -148,10 +152,12 @@ public class Wechat extends CordovaPlugin {
     public void onDestroy() {
         super.onDestroy();
         instance = null;
+        cordovaActivity = null;
     }
 
     /**
      * Get weixin api
+     *
      * @param ctx
      * @return
      */
@@ -169,13 +175,19 @@ public class Wechat extends CordovaPlugin {
 
     public static void transmitLaunchFromWX(String extinfo) {
         if (instance == null) {
+            Log.w(Wechat.TAG, "instance is null.");
+            Wechat.extinfo = extinfo;
             return;
         }
+        Wechat.extinfo = null;
+
         JSONObject data = getLaunchFromWXObject(extinfo);
-        String format = "cordova.fireDocumentEvent('%s', %s);";
-        final String js = String.format(format, "wechat.launchFromWX", data.toString());
-        if(cordovaActivity != null) {
-            cordovaActivity.runOnUiThread(() -> instance.webView.loadUrl("javascript:" + js));
+        String format = "javascript:cordova.fireDocumentEvent('%s', %s);";
+        final String js = String.format(format, "wechat.launchFromWX", data);
+        if (cordovaActivity != null) {
+            cordovaActivity.runOnUiThread(() -> instance.webView.loadUrl(js));
+        } else {
+            Log.w(Wechat.TAG, "cordovaActivity is null.");
         }
     }
 
@@ -201,10 +213,10 @@ public class Wechat extends CordovaPlugin {
             return sendPaymentRequest(args, callbackContext);
         } else if (action.equals("isWXAppInstalled")) {
             return isInstalled(callbackContext);
-        }else if (action.equals("chooseInvoiceFromWX")){
+        } else if (action.equals("chooseInvoiceFromWX")) {
             return chooseInvoiceFromWX(args, callbackContext);
-        }else if(action.equals("openMiniProgram")){
-            return openMiniProgram(args,callbackContext);
+        } else if (action.equals("openMiniProgram")) {
+            return openMiniProgram(args, callbackContext);
         }
 
         return false;
@@ -505,7 +517,7 @@ public class Wechat extends CordovaPlugin {
                 case TYPE_WECHAT_SHARING_IMAGE:
                     Bitmap image = getBitmap(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE, 0);
                     // give some tips to user           
-                    if(image != null) {
+                    if (image != null) {
                         mediaObject = new WXImageObject(image);
                         image.recycle();
                     }
@@ -537,7 +549,7 @@ public class Wechat extends CordovaPlugin {
                         wxMediaMessage.description = message.getString(KEY_ARG_MESSAGE_DESCRIPTION);               // 小程序消息desc
                         wxMediaMessage.thumbData = Util.readBytes(getFileInputStream(media.getString(KEY_ARG_MESSAGE_MEDIA_HDIMAGEDATA))); // 小程序消息封面图片，小于128k
                         return wxMediaMessage;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
                     break;
@@ -609,8 +621,8 @@ public class Wechat extends CordovaPlugin {
 
                 int length = scaled.getRowBytes() * scaled.getHeight();
 
-                if(length > (maxSize/10)*1024) {
-                    scaled = compressImage(scaled,(maxSize/10));
+                if (length > (maxSize / 10) * 1024) {
+                    scaled = compressImage(scaled, (maxSize / 10));
                 }
 
                 bmp = scaled;
@@ -633,7 +645,7 @@ public class Wechat extends CordovaPlugin {
     /**
      * compress bitmap by quility
      */
-    protected  Bitmap compressImage(Bitmap image,Integer maxSize) {
+    protected Bitmap compressImage(Bitmap image, Integer maxSize) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -716,9 +728,9 @@ public class Wechat extends CordovaPlugin {
 
     public static String getAppId(CordovaPreferences f_preferences) {
         if (appId == null) {
-            if(f_preferences != null) {
+            if (f_preferences != null) {
                 appId = f_preferences.getString(WXAPPID_PROPERTY_KEY, "");
-            }else if(wx_preferences != null){
+            } else if (wx_preferences != null) {
                 appId = wx_preferences.getString(WXAPPID_PROPERTY_KEY, "");
             }
         }
@@ -728,6 +740,7 @@ public class Wechat extends CordovaPlugin {
 
     /**
      * Get saved app id
+     *
      * @param ctx
      * @return
      */
@@ -738,12 +751,13 @@ public class Wechat extends CordovaPlugin {
 
     /**
      * Save app id into SharedPreferences
+     *
      * @param ctx
      * @param id
      */
     public static void saveAppId(Context ctx, String id) {
-        if (id!=null && id.isEmpty()) {
-            return ;
+        if (id != null && id.isEmpty()) {
+            return;
         }
 
         SharedPreferences settings = ctx.getSharedPreferences(PREFS_NAME, 0);
@@ -766,9 +780,10 @@ public class Wechat extends CordovaPlugin {
         callbackContext.sendPluginResult(result);
     }
 
-    protected boolean openMiniProgram(CordovaArgs args, CallbackContext callbackContext){
+    protected boolean openMiniProgram(CordovaArgs args, CallbackContext callbackContext) {
         currentCallbackContext = callbackContext;
-        String appId = getAppId(preferences);; // 填应用AppId
+        String appId = getAppId(preferences);
+        ; // 填应用AppId
         IWXAPI api = WXAPIFactory.createWXAPI(cordova.getActivity(), appId);
 
         final JSONObject params;
@@ -785,9 +800,9 @@ public class Wechat extends CordovaPlugin {
             req.path = params.getString(KEY_ARG_MESSAGE_MEDIA_PATH);                  //拉起小程序页面的可带参路径，不填默认拉起小程序首页
             req.miniprogramType = params.getInt(KEY_ARG_MESSAGE_MEDIA_MINIPROGRAMTYPE);// 可选打开 开发版，体验版和正式版
             api.sendReq(req);
-        }catch (Exception e){
+        } catch (Exception e) {
             callbackContext.error(ERROR_INVALID_PARAMETERS);
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         return true;
     }
