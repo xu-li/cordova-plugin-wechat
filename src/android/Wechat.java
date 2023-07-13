@@ -31,10 +31,8 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
-import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaPreferences;
-import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -115,12 +113,6 @@ public class Wechat extends CordovaPlugin {
     private static Wechat instance;
     private static Activity cordovaActivity;
 
-    @Override
-    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-        super.initialize(cordova, webView);
-        Log.d(TAG,"initialize wechat plugin");
-        cordovaActivity = cordova.getActivity();
-    }
 
     @Override
     protected void pluginInitialize() {
@@ -137,6 +129,7 @@ public class Wechat extends CordovaPlugin {
 
         // 保存引用
         instance = this;
+        cordovaActivity = cordova.getActivity();
 
         Log.d(TAG, "plugin initialized.");
     }
