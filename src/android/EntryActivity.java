@@ -10,9 +10,11 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
+import com.tencent.mm.opensdk.modelmsg.ShowMessageFromWX;
 
 import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
@@ -111,6 +113,15 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onReq(BaseReq req) {
+        // 获取开放标签传递的extinfo数据逻辑
+        if (req.getType() == ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX && req instanceof ShowMessageFromWX.Req) {
+            ShowMessageFromWX.Req showReq = (ShowMessageFromWX.Req) req;
+            WXMediaMessage mediaMsg = showReq.message;
+            String extInfo = mediaMsg.messageExt;
+
+            Wechat.transmitLaunchFromWX(extInfo);
+        }
+        
         finish();
     }
 

@@ -1,15 +1,17 @@
 package xu.li.cordova.wechat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
@@ -18,33 +20,32 @@ import com.tencent.mm.opensdk.modelmsg.WXEmojiObject;
 import com.tencent.mm.opensdk.modelmsg.WXFileObject;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaPreferences;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import org.apache.cordova.CordovaPreferences;
 
 public class Wechat extends CordovaPlugin {
 
@@ -111,6 +112,15 @@ public class Wechat extends CordovaPlugin {
     protected static IWXAPI wxAPI;
     protected static String appId;
     protected static CordovaPreferences wx_preferences;
+    private static Wechat instance;
+    private static Activity cordovaActivity;
+
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        Log.d(TAG,"initialize wechat plugin");
+        cordovaActivity = cordova.getActivity();
+    }
 
     @Override
     protected void pluginInitialize() {
@@ -125,6 +135,9 @@ public class Wechat extends CordovaPlugin {
         // init api
         initWXAPI();
 
+        // 保存引用
+        instance = this;
+
         Log.d(TAG, "plugin initialized.");
     }
 
@@ -136,6 +149,12 @@ public class Wechat extends CordovaPlugin {
         if (api != null) {
             api.registerApp(getAppId(preferences));
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        instance = null;
     }
 
     /**
@@ -153,6 +172,28 @@ public class Wechat extends CordovaPlugin {
         }
 
         return wxAPI;
+    }
+
+    public static void transmitLaunchFromWX(String extinfo) {
+        if (instance == null) {
+            return;
+        }
+        JSONObject data = getLaunchFromWXObject(extinfo);
+        String format = "cordova.fireDocumentEvent('%s', %s);";
+        final String js = String.format(format, "wechat.launchFromWX", data.toString());
+        if(cordovaActivity != null) {
+            cordovaActivity.runOnUiThread(() -> instance.webView.loadUrl("javascript:" + js));
+        }
+    }
+
+    private static JSONObject getLaunchFromWXObject(String extinfo) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("extinfo", extinfo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
     @Override
