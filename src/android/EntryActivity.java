@@ -1,4 +1,4 @@
-package __PACKAGE_NAME__;
+package __PACKAGE_NAME__.wxapi;
 
 import android.app.Activity;
 import android.content.Context;
