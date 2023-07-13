@@ -271,6 +271,14 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 
 #pragma mark "WXApiDelegate"
 
+-(NSString*)toJsonString: (NSDictionary *)params
+{
+    NSError  *error;
+    NSData   *data       = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
+    NSString *jsonString = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    return jsonString;
+}
+
 /**
  * On wechat request
  */
