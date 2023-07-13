@@ -24,6 +24,8 @@ static int const MAX_THUMBNAIL_SIZE = 320;
         
         NSLog(@"cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.", [WXApi getApiVersion], appId);
     }
+
+    sharedWechatPlugin = self;
 }
 
 - (void)isWXAppInstalled:(CDVInvokedUrlCommand *)command
@@ -269,12 +271,37 @@ static int const MAX_THUMBNAIL_SIZE = 320;
 
 #pragma mark "WXApiDelegate"
 
+-(NSString*)toJsonString: (NSDictionary *)params
+{
+    NSError  *error;
+    NSData   *data       = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
+    NSString *jsonString = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    return jsonString;
+}
+
 /**
- * Not implemented
+ * On wechat request
  */
 - (void)onReq:(BaseReq *)req
 {
     NSLog(@"%@", req);
+    
+    // 获取开放标签传递的extinfo数据逻辑
+    if ([req isKindOfClass:[LaunchFromWXReq class]])
+    {
+        WXMediaMessage *msg = ((LaunchFromWXReq*)req).message;
+        NSString *extinfo = msg.messageExt;
+        
+        NSLog(@"extinfo = %@", extinfo);
+        if(sharedWechatPlugin) {
+            NSDictionary *params = @{@"extinfo": extinfo};
+            dispatch_async(dispatch_get_main_queue(), ^{
+              [sharedWechatPlugin.commandDelegate evalJs:[NSString stringWithFormat:@"cordova.fireDocumentEvent('wechat.%@',%@)",
+                                                         WechatDocumentEvent_LaunchFromWXReq,
+                                                         [self toJsonString:params]]];
+            });
+        }
+    }
 }
 
 - (void)onResp:(WXLaunchMiniProgramResp *)resp

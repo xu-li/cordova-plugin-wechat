@@ -85,7 +85,7 @@ module.exports = function (context) {
                     throw err;
                 }
 
-                data = data.replace(/^package __PACKAGE_NAME__;/m, 'package ' + packageName + '.wxapi;');
+                data = data.replace(/__PACKAGE_NAME__/ig, packageName);
                 fs.writeFileSync(path.join(targetDir, f), data);
             });
         });

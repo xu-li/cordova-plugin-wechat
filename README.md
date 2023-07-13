@@ -24,6 +24,7 @@ A cordova plugin, a JS version of Wechat SDK
 * open wechat auth;
 * send wechat payment request;
 * open wechat miniprogram;
+* listener wx-open-launch-app event;
 
 # Documentation
 
@@ -185,6 +186,20 @@ Wechat.openMiniProgram(params,function(data){
     console.log(data); // data:{extMsg:""}  extMsg: Corresponds to the app-parameter attribute in the Mini Program component <button open-type="launchApp">
 },function(){
     alert('error');
+})
+```
+
+## wx-open-launch-app event
+```javascript
+Wechat.isInstalled((installed) => {
+  if (!installed) return
+  document.addEventListener(
+    'wechat.launchFromWX',
+    ({ extinfo }) => {
+      console.log('launch from wechat extinfo = ', extinfo)
+    },
+    false
+  )
 })
 ```
 

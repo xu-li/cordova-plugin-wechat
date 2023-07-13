@@ -24,6 +24,11 @@ module.exports = {
         PREVIEW: 2  // 体验版
     },
 
+    Events: {
+        // 通过微信打开，回调传入 extinfo 参数
+        LaunchFromWX: 'wechat.launchFromWX'
+    },
+
     isInstalled: function (onSuccess, onError) {
         exec(onSuccess, onError, "Wechat", "isWXAppInstalled", []);
     },

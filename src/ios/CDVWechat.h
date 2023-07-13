@@ -37,3 +37,6 @@ enum  CDVWechatSharingType {
 - (BOOL)handleUserActivity:(NSUserActivity *)userActivity;
 - (BOOL)handleWechatOpenURL:(NSURL *)url;
 @end
+
+static CDVWechat *sharedWechatPlugin;
+static NSString *const WechatDocumentEvent_LaunchFromWXReq = @"launchFromWX";
