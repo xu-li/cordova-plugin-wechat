@@ -179,6 +179,20 @@ Wechat.openMiniProgram(params,function(data){
 })
 ```
 
+## wx-open-launch-app 事件
+```javascript
+Wechat.isInstalled((installed) => {
+  if (!installed) return
+  document.addEventListener(
+    'wechat.launchFromWX',
+    ({ extinfo }) => {
+      console.log('launch from wechat extinfo = ', extinfo)
+    },
+    false
+  )
+})
+```
+
 # FAQ
 
 See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
