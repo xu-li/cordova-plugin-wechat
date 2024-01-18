@@ -2,6 +2,10 @@
 ![Downloads](https://img.shields.io/npm/dt/cordova-plugin-wechat.svg)
 ![version](https://img.shields.io/npm/v/cordova-plugin-wechat/latest.svg)
 
+# 4.x
+
+4.x版本适配了最新的微信SDK和Cordova，由BSF软件基金会运营维护，[点击了解](https://byteee.fund/zh/project/cordova-plugin-wechat) 
+
 
 # 重要说明
 
