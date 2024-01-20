@@ -34,10 +34,10 @@ static BOOL swizzled = NO;
     }
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    CDVWechat *cdvWechat = [self.viewController getCommandInstance:@"wechat"];
-    return [cdvWechat handleWechatOpenURL:url];
-}
+//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+//    CDVWechat *cdvWechat = [self.viewController getCommandInstance:@"wechat"];
+//    return [cdvWechat handleWechatOpenURL:url];
+//}
 
 - (BOOL)swizzleApplication:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler {
     if (![userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
